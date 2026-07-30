@@ -1,7 +1,26 @@
 aid: karumi
+accessModel:
+  pricing: unknown
+  onboarding: unknown
+  trial: false
+  try_now: false
+  public: false
+  label: Unknown
+  confidence: low
+  source: []
+  generated: '2026-07-22'
+  method: derived
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/karumi.png
 name: Karumi
-description: Karumi is a company surfaced as a portfolio company of y-combinator and added to the API
-  Evangelist network as a stub for enrichment. This profile is a lead awaiting the enrichment pipeline.
+description: Karumi is an agentic demo platform that delivers personalized, AI-powered
+  product demonstrations during live video calls. Its AI agent runs live, interactive
+  demos 24/7 across landing pages, in-app surfaces, and outbound email, adapting each
+  demonstration to the prospect and navigating the product in-browser in real time.
+  It supports multiple languages, logs transcripts, analysis, and next steps into the
+  CRM, and targets B2B SaaS go-to-market teams looking to engage high-intent leads at
+  peak interest instead of waiting days for a human demo. Karumi is a Y Combinator
+  (Fall 2025) company founded by Pablo Omenaca (CEO) and Toni Lopez (CTO), both
+  formerly of StackAI (YC W23).
 url: https://raw.githubusercontent.com/api-evangelist/karumi/refs/heads/main/apis.yml
 x-type: company
 x-source: vc-portfolio
@@ -11,12 +30,44 @@ x-tier: stub
 x-tier-reason: portfolio-lead
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-17'
+modified: '2026-07-19'
 tags:
 - Company
+- AI Agents
+- Product Demos
+- Sales Enablement
+- Go-To-Market
+- SaaS
+- Conversational AI
+- Video
+- Y Combinator
 apis: []
+common:
+- type: DomainSecurity
+  url: security/karumi-domain-security.yml
+- type: Website
+  url: https://www.karumi.ai/
+- type: Blog
+  url: https://www.karumi.ai/blog
+- type: Pricing
+  url: https://www.karumi.ai/pricing
+- type: SignUp
+  url: https://app.karumi.ai/
+- type: TermsOfService
+  url: https://www.karumi.ai/terms
+- type: PrivacyPolicy
+  url: https://www.karumi.ai/privacy
+- type: TrustCenter
+  url: security/karumi-trust-center.yml
+- type: Compliance
+  url: https://trust.delve.co/karumi
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
+x-enrichment:
+  date: '2026-07-19'
+  status: backfilled
+  pass: local-v1
+  note: backfilled from .gitignore signal + verified work evidence
