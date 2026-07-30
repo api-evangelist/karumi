@@ -1,0 +1,26 @@
+generated: '2026-07-19'
+method: searched
+source: https://www.karumi.ai/
+url: https://trust.delve.co/karumi
+certifications:
+- SOC 2
+- ISO 27001
+- GDPR
+controls:
+- Role-Based Access Control (RBAC)
+- Encryption
+evidence:
+- source: https://www.karumi.ai/
+  keywords:
+  - soc 2
+  - iso 27001
+  - gdpr
+  - rbac
+  - encryption
+- source: https://trust.delve.co/karumi
+  kind: trust-center
+notes: Security portal hosted on Delve (trust.delve.co/karumi). Compliance certifications
+  (GDPR, SOC 2, ISO 27001) and enterprise security controls (RBAC, encryption) are
+  published in the enterprise-security section of the karumi.ai homepage. Trust portal
+  returned HTTP 429 (rate limited) on direct fetch; certification list taken verbatim
+  from the provider homepage.
