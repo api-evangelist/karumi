@@ -1,15 +1,17 @@
 aid: karumi
 accessModel:
-  pricing: unknown
-  onboarding: unknown
+  pricing: self-serve
+  onboarding: sales-assisted
   trial: false
   try_now: false
   public: false
-  label: Unknown
-  confidence: low
-  source: []
-  generated: '2026-07-22'
-  method: derived
+  label: Published pricing, account required
+  confidence: medium
+  source:
+  - https://www.karumi.ai/pricing
+  - https://www.karumi.ai/mcp-documentation
+  generated: '2026-08-13'
+  method: searched
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/karumi.png
 name: Karumi
 description: Karumi is an agentic demo platform that delivers personalized, AI-powered
@@ -18,7 +20,10 @@ description: Karumi is an agentic demo platform that delivers personalized, AI-p
   demonstration to the prospect and navigating the product in-browser in real time.
   It supports multiple languages, logs transcripts, analysis, and next steps into the
   CRM, and targets B2B SaaS go-to-market teams looking to engage high-intent leads at
-  peak interest instead of waiting days for a human demo. Karumi is a Y Combinator
+  peak interest instead of waiting days for a human demo. Karumi publishes a read-only
+  Public API over session, transcript, insight, target and analytics data (OpenAPI
+  3.1.0, X-Api-Key auth) and a hosted, OAuth-protected MCP server exposing 37 tools
+  for operating the platform from an MCP client. Karumi is a Y Combinator
   (Fall 2025) company founded by Pablo Omenaca (CEO) and Toni Lopez (CTO), both
   formerly of StackAI (YC W23).
 url: https://raw.githubusercontent.com/api-evangelist/karumi/refs/heads/main/apis.yml
@@ -26,11 +31,9 @@ x-type: company
 x-source: vc-portfolio
 x-backed-by:
 - y-combinator
-x-tier: stub
-x-tier-reason: portfolio-lead
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-19'
+modified: '2026-08-13'
 tags:
 - Company
 - AI Agents
@@ -41,22 +44,126 @@ tags:
 - Conversational AI
 - Video
 - Y Combinator
-apis: []
+- mcp
+- agent-native
+- analytics
+- conversation-intelligence
+apis:
+- name: Karumi Public API
+  description: Read-only REST API over Karumi session data — demo sessions and their
+    full transcripts, per-session insights, session recordings, meeting events,
+    aggregate and time-series analytics, and the targets (demo projects) with their
+    user journeys. OpenAPI 3.1.0, JSON, limit/offset pagination, authenticated with
+    an organization API key sent in the X-Api-Key header.
+  humanURL: https://api.karumi.ai/api/v1/docs
+  baseURL: https://api.karumi.ai/api/v1
+  tags:
+  - sessions
+  - transcripts
+  - analytics
+  - conversation-intelligence
+  - product-demos
+  properties:
+  - type: OpenAPI
+    url: openapi/karumi-public-api-openapi.json
+  - type: Overlay
+    url: overlays/karumi-public-api-overlay.yaml
+  - type: Documentation
+    url: https://api.karumi.ai/api/v1/docs
+  - type: APIReference
+    url: https://api.karumi.ai/api/v1/redoc
+  - type: Authentication
+    url: authentication/karumi-authentication.yml
+  - type: Conventions
+    url: conventions/karumi-conventions.yml
+  - type: DataModel
+    url: data-model/karumi-data-model.yml
+  - type: ErrorCatalog
+    url: errors/karumi-problem-types.yml
+- name: Karumi MCP Server
+  description: Hosted, remote MCP server that exposes a Karumi workspace to any
+    MCP-compatible client. 37 published tools cover organizations, agents, sessions,
+    transcripts (keyword and semantic search), leads, companies, audiences, journeys,
+    start pages, knowledge, voices, Q&A and API keys; 13 of them are write or
+    destructive and require client confirmation. Authenticated with OAuth 2.0
+    authorization code over HTTPS, advertising RFC 9728 protected-resource metadata.
+  humanURL: https://www.karumi.ai/mcp-documentation
+  baseURL: https://api.karumi.ai/mcp/
+  tags:
+  - mcp
+  - agent-native
+  - product-demos
+  - sales-enablement
+  properties:
+  - type: MCPServer
+    url: mcp/karumi-mcp.yml
+  - type: MCPServer
+    url: https://api.karumi.ai/mcp/
+  - type: ToolCrosswalk
+    url: mcp/karumi-tool-crosswalk.yml
+  - type: Documentation
+    url: https://www.karumi.ai/mcp-documentation
+  - type: OAuthScopes
+    url: scopes/karumi-scopes.yml
 common:
-- type: DomainSecurity
-  url: security/karumi-domain-security.yml
+- type: AgenticAccess
+  url: agentic-access/karumi-agentic-access.yml
 - type: Website
   url: https://www.karumi.ai/
+- type: Documentation
+  url: https://api.karumi.ai/api/v1/docs
+- type: APIReference
+  url: https://api.karumi.ai/api/v1/redoc
+- type: MCPServer
+  url: mcp/karumi-mcp.yml
+- type: ToolCrosswalk
+  url: mcp/karumi-tool-crosswalk.yml
+- type: OpenAPI
+  url: openapi/karumi-public-api-openapi.json
+- type: Overlay
+  url: overlays/karumi-public-api-overlay.yaml
+- type: Authentication
+  url: authentication/karumi-authentication.yml
+- type: OAuthScopes
+  url: scopes/karumi-scopes.yml
+- type: Conventions
+  url: conventions/karumi-conventions.yml
+- type: DataModel
+  url: data-model/karumi-data-model.yml
+- type: ErrorCatalog
+  url: errors/karumi-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/karumi-lifecycle.yml
+- type: Conformance
+  url: conformance/karumi-conformance.yml
+- type: WellKnown
+  url: well-known/karumi-well-known.yml
+- type: LLMsTxt
+  url: llms/karumi-llms.txt
+- type: AgentSkill
+  url: skills/_index.yml
+- type: Components
+  url: components/karumi-components.yml
+- type: Packages
+  url: packages/karumi-packages.yml
+- type: Plans
+  url: plans/karumi-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/karumi-rate-limits.yml
 - type: Blog
   url: https://www.karumi.ai/blog
 - type: Pricing
   url: https://www.karumi.ai/pricing
 - type: SignUp
   url: https://app.karumi.ai/
+- type: Login
+  url: https://app.karumi.ai/
 - type: TermsOfService
   url: https://www.karumi.ai/terms
 - type: PrivacyPolicy
   url: https://www.karumi.ai/privacy
+- type: DomainSecurity
+  url: security/karumi-domain-security.yml
 - type: TrustCenter
   url: security/karumi-trust-center.yml
 - type: Compliance
@@ -67,7 +174,16 @@ maintainers:
 - FN: APIs.json
   email: info@apis.io
 x-enrichment:
-  date: '2026-07-19'
-  status: backfilled
+  date: '2026-08-13'
+  status: enriched
+  artifacts_added: 25
   pass: local-v1
-  note: backfilled from .gitignore signal + verified work evidence
+  note: >-
+    Contract discovery beat the docs host. karumi.ai serves no /docs, /developers or
+    /api page and no llms.txt, but the API host root has a live OpenAPI 3.1.0 at
+    https://api.karumi.ai/api/v1/openapi.json (the shorter /openapi.json and /docs
+    paths are behind a Cloudflare managed challenge), and the sitemap named a public
+    MCP connector page. Karumi also runs a hosted OAuth-protected MCP server with 37
+    published tools. Not published: security.txt, api-catalog, A2A agent card, status
+    page, changelog, deprecation policy, rate limits, webhooks/AsyncAPI, and any
+    client SDK in any package registry.
