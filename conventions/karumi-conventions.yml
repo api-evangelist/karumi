@@ -1,0 +1,136 @@
+generated: '2026-08-13'
+method: derived
+source: openapi/karumi-public-api-openapi.json
+docs: https://api.karumi.ai/api/v1/docs
+note: >-
+  Karumi publishes no written API conventions guide. Everything below is derived from
+  the harvested OpenAPI and from live responses observed on 2026-08-13, or read from the
+  MCP documentation page. Absences are recorded as absences.
+authentication:
+  style: api-key
+  header: X-Api-Key
+  scope: organization
+  declared_in_spec: false
+  enforced: true
+  evidence: 'GET https://api.karumi.ai/api/v1/sessions -> 401 {"detail":"Missing X-Api-Key
+    header"}'
+  see: authentication/karumi-authentication.yml
+idempotency:
+  supported: false
+  note: >-
+    Not applicable to the Public API as published — all nine operations are GET and
+    therefore naturally idempotent, and there is no idempotency-key header, parameter or
+    documented replay contract anywhere in the spec. The write surface lives on the MCP
+    server, which has no published idempotency contract either. No Idempotency pointer
+    is emitted for this provider.
+pagination:
+  style: offset-limit
+  applies_to:
+  - list_sessions_sessions_get
+  - list_meeting_events_sessions_meeting_events_get
+  request_params:
+  - name: limit
+    in: query
+    default: 100
+    minimum: 1
+    maximum: 500
+  - name: offset
+    in: query
+    default: 0
+    minimum: 0
+  response_envelope:
+    schemas:
+    - PaginatedSessions
+    - PaginatedSessionEvents
+    fields:
+    - items
+    - total
+    - limit
+    - offset
+  cursor: false
+  link_header: false
+  note: total is returned, so a client can compute the page count; there is no next/prev
+    link and no cursor.
+filtering:
+  list_sessions_sessions_get:
+  - project_id (uuid)
+  - status (string)
+  - start_date (date-time)
+  - end_date (date-time)
+  list_meeting_events_sessions_meeting_events_get:
+  - see spec
+  note: Filtering is per-operation query parameters; there is no generic filter grammar.
+field_expansion:
+  supported: false
+  note: >-
+    No expand/fields/include parameters. Expansion is instead baked into distinct
+    schemas — GET /sessions returns PublicSession, GET /sessions/{id} returns
+    PublicSessionWithMessages (adds messages[] and recording_url), and
+    GET /targets/{id} returns PublicTargetWithJourneys (adds journeys[]).
+sparse_fieldsets:
+  supported: false
+metadata:
+  supported: true
+  fields:
+  - PublicSession.metadata (free-form object)
+  - PublicSession.labels (free-form object)
+  - PublicSessionEvent.metadata (free-form object)
+  note: Free-form JSON objects with no declared shape; read-only over this API.
+request_tracing:
+  request_id_header: false
+  note: >-
+    No X-Request-Id or correlation header is documented or returned. Responses do carry
+    Render's `rndr-id` and Cloudflare's `cf-ray`, which are infrastructure identifiers,
+    not a provider-supported trace contract.
+versioning:
+  scheme: uri-path
+  current: v1
+  base: https://api.karumi.ai/api/v1
+  spec_version: 1.0.0
+  header_negotiation: false
+  see: lifecycle/karumi-lifecycle.yml
+error_envelope:
+  shape: non-standard
+  format: not rfc9457
+  validation:
+    status: 422
+    schema: HTTPValidationError
+    body: '{"detail": [{"loc": [...], "msg": "...", "type": "..."}]}'
+  auth:
+    status: 401
+    body: '{"detail": "Missing X-Api-Key header"}'
+  not_found:
+    status: 404
+    body: '{"detail": "Not Found"}'
+  note: >-
+    The FastAPI default envelope. `detail` is a string on some errors and an array of
+    ValidationError objects on 422, so a client must type-check the field before reading
+    it. Content-type is application/json, never application/problem+json.
+  see: errors/karumi-problem-types.yml
+rate_limit_signaling:
+  headers_published: false
+  see: rate-limits/karumi-rate-limits.yml
+content_negotiation:
+  request: none (all operations are GET with query/path parameters only)
+  response: application/json for all operations except
+    download_session_recording_sessions__session_id__recording_get, which returns a
+    recording download.
+identifiers:
+  style: uuid
+  fields:
+  - PublicSession.id (uuid)
+  - PublicSessionEvent.id, session_id (uuid)
+  - PublicUserJourney.id (uuid)
+  - PublicTarget.project_id (uuid)
+  - PublicTarget.id (string, format not declared)
+  prefixes: none published
+timestamps:
+  format: RFC 3339 date-time
+  fields:
+  - created_at
+cors:
+  public_api: not observed
+  mcp_server:
+    allow_origin: '*'
+    allow_methods: [GET, POST, DELETE, OPTIONS]
+    allow_headers: [authorization, content-type, x-api-key, mcp-session-id]

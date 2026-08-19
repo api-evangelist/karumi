@@ -1,0 +1,104 @@
+generated: '2026-08-13'
+method: generated
+source: openapi/karumi-public-api-openapi.json
+description: Recommended x-agentic-access execution contracts, classified heuristically from
+  the OpenAPI. A governance starting point for exposing this API to AI agents — review and bind
+  audience per deployment. See research/curity/agentic-governance/.
+summary:
+  operations: 9
+  by_action_class:
+    connected: 9
+  by_consequence:
+    read: 9
+  human_in_the_loop_required: 0
+operations:
+- path: /sessions
+  method: get
+  operationId: list_sessions_sessions_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /sessions/meeting-events
+  method: get
+  operationId: list_meeting_events_sessions_meeting_events_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /sessions/{session_id}
+  method: get
+  operationId: get_session_sessions__session_id__get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /sessions/{session_id}/insights
+  method: get
+  operationId: get_session_insights_sessions__session_id__insights_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /sessions/{session_id}/recording
+  method: get
+  operationId: download_session_recording_sessions__session_id__recording_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /analytics
+  method: get
+  operationId: get_analytics_analytics_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /analytics/timeline
+  method: get
+  operationId: get_analytics_timeline_analytics_timeline_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /targets
+  method: get
+  operationId: list_targets_targets_get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /targets/{target_id}
+  method: get
+  operationId: get_target_targets__target_id__get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none

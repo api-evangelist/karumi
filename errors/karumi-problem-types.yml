@@ -1,0 +1,69 @@
+generated: '2026-08-13'
+method: derived
+source: openapi/karumi-public-api-openapi.json
+format: not-rfc9457
+envelope:
+  media_type: application/json
+  field: detail
+  shapes:
+  - string (auth, not-found, and other HTTPException responses)
+  - array of ValidationError objects (422 request validation)
+  note: >-
+    Karumi returns the FastAPI default error envelope. It does NOT use RFC 9457
+    application/problem+json — there is no type, title, status or instance member, and
+    no error-code registry. `detail` is polymorphic, which is the main hazard for an
+    agent: a client that assumes a string will break on a 422 and a client that assumes
+    an array will break on a 401.
+problems:
+- status: 422
+  title: Validation Error
+  schema: HTTPValidationError
+  documented_in_spec: true
+  detail_shape: array
+  members:
+  - loc — array of string/integer, the path to the offending input
+  - msg — human-readable message
+  - type — Pydantic error type identifier
+  - input — the rejected value (optional)
+  - ctx — extra context (optional)
+  remediation: Correct the named query/path parameter. Common causes are a non-UUID
+    project_id or session_id, a malformed RFC 3339 start_date/end_date, or a limit
+    outside 1..500.
+  source_operation: all nine operations declare this response
+- status: 401
+  title: Missing or invalid API key
+  documented_in_spec: false
+  detail_shape: string
+  observed_body: '{"detail": "Missing X-Api-Key header"}'
+  observed_at: '2026-08-13'
+  evidence: GET https://api.karumi.ai/api/v1/sessions with no key
+  remediation: Send the organization API key in the X-Api-Key request header. Mint or
+    rotate keys from the Karumi workspace or the create_api_key / revoke_api_key MCP
+    tools.
+  source_operation: all nine operations (enforced by the server, undeclared in the spec)
+- status: 404
+  title: Not Found
+  documented_in_spec: false
+  detail_shape: string
+  observed_body: '{"detail": "Not Found"}'
+  observed_at: '2026-08-13'
+  evidence: GET https://api.karumi.ai/api/v2/openapi.json
+  remediation: Check the path and the resource identifier. Applies both to unknown
+    routes and to a session_id or target_id that does not exist in the caller's
+    organization.
+  source_operation: get_session_sessions__session_id__get, get_session_insights_sessions__session_id__insights_get,
+    download_session_recording_sessions__session_id__recording_get, get_target_targets__target_id__get
+mcp_errors:
+- surface: https://api.karumi.ai/mcp/
+  status: 401
+  observed_body: '{"error": "unauthorized"}'
+  www_authenticate: Bearer resource_metadata="https://api.karumi.ai/.well-known/oauth-protected-resource"
+  note: A different envelope again — `error`, not `detail`. The RFC 9728 challenge is
+    correct and machine-actionable, which is the strongest error signal Karumi ships.
+gaps:
+- No published error reference page.
+- No stable, documented error codes — only HTTP status plus a prose `detail`.
+- 401, 403, 404 and 5xx responses are absent from the OpenAPI; only 200 and 422 are
+  declared. overlays/karumi-public-api-overlay.yaml adds 401 without mutating the
+  harvested spec.
+- No Retry-After or rate-limit error is documented; see rate-limits/karumi-rate-limits.yml.

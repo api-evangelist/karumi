@@ -1,0 +1,62 @@
+generated: '2026-08-13'
+method: searched
+source: npm, PyPI, RubyGems, crates.io registry searches + https://app.karumi.ai/chat.js
+note: >-
+  Karumi publishes no client SDK in any package registry. The only first-party
+  distributable is the browser Chat Bar widget, served unversioned from Karumi's own
+  origin — a CDN-style distribution with no registry metadata endpoint to query. No
+  `SDKs` pointer is emitted in apis.yml, because an embeddable chat widget is not a
+  client library for the Public API and claiming otherwise would credit Karumi with an
+  SDK it does not ship.
+packages:
+- language: javascript
+  registry: cdn
+  name: Karumi Chat Bar (chat.js)
+  url: https://app.karumi.ai/chat.js
+  install: '<script src="https://app.karumi.ai/chat.js" data-target-id="YOUR_TARGET_ID"></script>'
+  official: true
+  version: null
+  published: null
+  note: >-
+    Unpinned distribution. The URL carries no version segment and no query version, and
+    there is no jsDelivr/unpkg mirror or npm package behind it, so there is no metadata
+    endpoint to read a version or release date from — a consumer embedding this script
+    cannot tell which build they are getting either. Observed 2026-08-13: HTTP 200,
+    application/javascript, 425,868 bytes.
+  kind: embeddable-widget
+  see: components/karumi-components.yml
+registry_searches:
+- registry: npm
+  queries: [karumi, '@karumi', karumi-sdk, karumi-ai]
+  result: none
+  note: >-
+    npm returns only `learnyougit` under github.com/karumi. That is Karumi S.L., an
+    unrelated Spanish mobile-development consultancy that has used the karumi name and
+    GitHub org since long before karumi.ai (Y Combinator Fall 2025) existed. It is NOT
+    this company and nothing from that org is attributed here.
+- registry: pypi
+  queries: [karumi, karumi-sdk, karumi-ai]
+  result: none
+  http_status: 404
+- registry: rubygems
+  queries: [karumi]
+  result: none
+  http_status: 404
+- registry: crates.io
+  queries: [karumi]
+  result: none
+- registry: maven-central
+  queries: [karumi]
+  result: none
+- registry: nuget
+  queries: [karumi]
+  result: none
+- registry: pkg.go.dev
+  queries: [karumi]
+  result: none
+official_sdk_count: 0
+gaps:
+- No client library for the Public API in any language; consumers hand-roll HTTP with an
+  X-Api-Key header.
+- The one shipped artifact is unversioned, so there is no release cadence or decay signal
+  to read.

@@ -1,0 +1,62 @@
+generated: '2026-08-13'
+method: derived
+source: openapi/karumi-public-api-openapi.json
+note: >-
+  Karumi publishes no versioning policy, no deprecation policy, no changelog and no
+  status page. Everything recorded here is derived from the spec and from live probes on
+  2026-08-13. No StatusPage or Deprecation pointer is emitted in apis.yml, because
+  neither surface exists.
+versioning:
+  scheme: uri-path
+  current: v1
+  base: https://api.karumi.ai/api/v1
+  spec_version: 1.0.0
+  policy_url: null
+  note: >-
+    /api/v2/openapi.json returns 404, so v1 is the only version published. The spec
+    carries info.version 1.0.0 with no date or revision marker, so a consumer cannot
+    detect a change without diffing the document.
+deprecation:
+  policy_url: null
+  sunset_header: unknown
+  deprecation_header: unknown
+  deprecated_operations: []
+  note: >-
+    No operation in the spec carries a `deprecated` flag set true, and no RFC 8594 Sunset
+    or Deprecation header behaviour is documented. Untested against a live deprecated
+    resource because none exists.
+change_log:
+  url: null
+  probed:
+  - url: https://www.karumi.ai/changelog
+    status: 404
+  note: The blog at https://www.karumi.ai/blog is marketing content, not a dated API
+    changelog.
+status_page:
+  url: null
+  probed:
+  - url: https://status.karumi.ai/
+    status: 0
+    note: DNS does not resolve.
+  note: No status page found on karumi.ai, on a status subdomain, or on the common
+    third-party hosts.
+sla:
+  url: null
+  uptime_target: null
+  note: >-
+    The pricing page lists "Enterprise SLAs" as an Enterprise-plan feature, but no SLA
+    document or uptime target is published. Source https://www.karumi.ai/pricing.
+maturity:
+  stage: early
+  evidence:
+  - Company founded 2025-11 (schema.org Organization on www.karumi.ai), Y Combinator
+    Fall 2025 batch.
+  - Public API is v1, read-only, nine operations.
+  - MCP connector documentation still says "during testing, choose Add custom connector".
+hosting:
+  api: 'Render (x-render-origin-server: uvicorn) behind Cloudflare'
+  app: Vercel
+  site: Framer
+  auth: Supabase Auth
+  note: Derived from response headers and DNS on 2026-08-13; useful for reasoning about
+    the availability posture in the absence of an SLA or status page.

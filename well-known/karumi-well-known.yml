@@ -1,0 +1,95 @@
+generated: '2026-08-13'
+method: probed
+source: live GET of /.well-known/* on every Karumi host in apis.yml
+note: >-
+  api.karumi.ai serves a real RFC 9728 OAuth protected-resource document for its MCP
+  endpoint. Everything else 404s. www.karumi.ai returns a plain-text "Not found" body
+  with a 404 status; app.karumi.ai returns the Next.js 404 HTML shell with a 404
+  status — neither is a served document. mcp.karumi.ai, the endpoint named on the
+  provider's own MCP documentation page, has no A record and does not resolve, so no
+  probe could be made against it.
+hosts:
+- host: https://api.karumi.ai
+  documents:
+  - path: /.well-known/oauth-protected-resource
+    status: 200
+    content_type: application/json
+    file: karumi-oauth-protected-resource.json
+    note: RFC 9728. Names resource https://api.karumi.ai/mcp and delegates authorization
+      to the Supabase Auth authorization server.
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+    note: Karumi does not host its own authorization server metadata; it delegates
+      to the Supabase Auth issuer named in the protected-resource document.
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+- host: https://www.karumi.ai
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+- host: https://app.karumi.ai
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+- host: https://mcp.karumi.ai
+  unreachable: true
+  note: DNS NODATA — the hostname is in the karumi.ai zone but publishes no A/AAAA
+    record, so no /.well-known/* path could be probed.
+delegated:
+  authorization_server: https://qmfmxcidbawbvkcstvio.supabase.co/auth/v1
+  documents:
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    content_type: application/json
+    file: karumi-oauth-authorization-server.json
+    note: RFC 8414 metadata for the Supabase Auth issuer Karumi's MCP server delegates
+      to. Saved because it is the anonymous source of the OAuth flows and scopes in
+      scopes/karumi-scopes.yml; it is Supabase-operated, not Karumi-operated.
+  - path: /.well-known/openid-configuration
+    status: 200
+    note: Identical payload to the RFC 8414 document; not saved separately.
+summary:
+  hosts_probed: 4
+  paths_probed: 25
+  documents_found: 1
+  security_txt: false
+  api_catalog: false
+  agent_card: false

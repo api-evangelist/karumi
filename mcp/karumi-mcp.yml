@@ -1,0 +1,276 @@
+generated: '2026-08-13'
+method: searched
+status: published
+source: https://www.karumi.ai/mcp-documentation
+deployment:
+  mode: remote
+  endpoint: https://api.karumi.ai/mcp/
+  auth: oauth
+  verified: probed
+  note: >-
+    The provider's own MCP documentation page tells users to add
+    https://mcp.karumi.ai as a custom connector. That hostname resolves to NODATA —
+    it exists in the karumi.ai zone but publishes no A/AAAA record, so nothing can
+    connect to it. The endpoint that actually answers MCP JSON-RPC is
+    https://api.karumi.ai/mcp/, which Karumi names itself in the `resource` field of
+    its RFC 9728 protected-resource document. Reported here as the reachable
+    endpoint; the documented one is recorded as a live defect below.
+server:
+  name: karumi
+  transport: http
+  url: https://api.karumi.ai/mcp/
+  documented_url: https://mcp.karumi.ai
+  protocol: MCP over HTTPS (streamable HTTP; Accept application/json, text/event-stream)
+  session_header: mcp-session-id
+  cors:
+    allow_origin: '*'
+    allow_methods: [GET, POST, DELETE, OPTIONS]
+    allow_headers: [authorization, content-type, x-api-key, mcp-session-id]
+authentication:
+  type: oauth2
+  flow: authorization_code
+  consent: explicit user consent screen at Karumi sign-in
+  protected_resource_metadata: https://api.karumi.ai/.well-known/oauth-protected-resource
+  authorization_server: https://qmfmxcidbawbvkcstvio.supabase.co/auth/v1
+  challenge: 'WWW-Authenticate: Bearer resource_metadata="https://api.karumi.ai/.well-known/oauth-protected-resource"'
+  revocation: Remove the connector in the MCP client, or revoke access in Karumi account
+    settings — takes effect immediately.
+  scoping: Access is limited to the organization(s) the authenticating user belongs to.
+clients:
+  - name: Claude
+    path: Settings -> Connectors -> Karumi connector, or "Add custom connector"
+introspection:
+  tools_list: gated
+  http_status: 401
+  probed: '2026-08-13'
+  note: >-
+    POST {"jsonrpc":"2.0","id":1,"method":"tools/list"} to https://api.karumi.ai/mcp/
+    returns HTTP 401 {"error": "unauthorized"}. The live inputSchema for each tool
+    therefore requires an authenticated introspection pass. The tool list below is the
+    provider's own published list (names + read/write classification) from
+    https://www.karumi.ai/mcp-documentation — descriptions are summarised from that
+    page's prose, and no input schema is asserted for any tool.
+tool_count: 37
+tools_readonly: 24
+tools_write: 13
+tools:
+- name: list_organizations
+  category: organizations
+  access: read
+  confirmation: false
+  description: List the Karumi organizations the connected account belongs to.
+- name: list_agents
+  category: agents
+  access: read
+  confirmation: false
+  description: List demo agents (demo projects) in the current organization, including
+    published state.
+- name: get_agent
+  category: agents
+  access: read
+  confirmation: false
+  description: Get one demo agent by project UUID or name.
+- name: get_agent_analytics
+  category: analytics
+  access: read
+  confirmation: false
+  description: Engagement analytics for a demo agent.
+- name: list_sessions
+  category: sessions
+  access: read
+  confirmation: false
+  description: Browse and filter prospect demo sessions.
+- name: get_session_detail
+  category: sessions
+  access: read
+  confirmation: false
+  description: Deep-dive one session with its full transcript.
+- name: get_session_summaries
+  category: sessions
+  access: read
+  confirmation: false
+  description: Generated summaries across demo sessions.
+- name: get_recording_status
+  category: sessions
+  access: read
+  confirmation: false
+  description: Whether a session recording is available.
+- name: search_transcripts
+  category: transcripts
+  access: read
+  confirmation: false
+  description: Keyword search across all demo conversation transcripts.
+- name: semantic_search
+  category: transcripts
+  access: read
+  confirmation: false
+  description: Semantic (embedding) search across all demo conversations.
+- name: list_leads
+  category: leads
+  access: read
+  confirmation: false
+  description: Pull lead records captured from demo sessions.
+- name: list_companies
+  category: leads
+  access: read
+  confirmation: false
+  description: List the companies associated with captured leads.
+- name: list_audiences
+  category: audiences
+  access: read
+  confirmation: false
+  description: List audiences — shareable, customizable entry points to a demo, one
+    per campaign or segment.
+- name: get_audience
+  category: audiences
+  access: read
+  confirmation: false
+  description: Get one audience and its configuration.
+- name: list_journeys
+  category: journeys
+  access: read
+  confirmation: false
+  description: List reusable demo flows (walkthroughs), referenced by name.
+- name: get_journey
+  category: journeys
+  access: read
+  confirmation: false
+  description: Get one journey and its script.
+- name: list_start_pages
+  category: start-pages
+  access: read
+  confirmation: false
+  description: List the visitor-facing landing pages served at an audience's URL.
+- name: get_start_page
+  category: start-pages
+  access: read
+  confirmation: false
+  description: Get one start page.
+- name: list_knowledge
+  category: knowledge
+  access: read
+  confirmation: false
+  description: List knowledge files backing an agent's answers.
+- name: list_knowledge_spaces
+  category: knowledge
+  access: read
+  confirmation: false
+  description: List knowledge spaces.
+- name: list_voices
+  category: voices
+  access: read
+  confirmation: false
+  description: List the voices available to demo agents.
+- name: list_qa_questions
+  category: qa
+  access: read
+  confirmation: false
+  description: List curated Q&A questions.
+- name: list_qa_answers
+  category: qa
+  access: read
+  confirmation: false
+  description: List curated Q&A answers.
+- name: answer_question
+  category: qa
+  access: read
+  confirmation: false
+  description: Answer a question from the agent's knowledge. Classified read-only by
+    the provider.
+- name: list_api_keys
+  category: api-keys
+  access: read
+  confirmation: false
+  description: List the organization's Karumi Public API keys.
+- name: create_audience
+  category: audiences
+  access: write
+  confirmation: true
+  description: Create a new audience (campaign or segment entry point) on an agent.
+- name: update_audience
+  category: audiences
+  access: write
+  confirmation: true
+  description: Update an existing audience.
+- name: delete_audience
+  category: audiences
+  access: destructive
+  confirmation: true
+  description: Delete an audience.
+- name: update_journey_script
+  category: journeys
+  access: write
+  confirmation: true
+  description: Edit the script of a reusable demo journey.
+- name: record_journey
+  category: journeys
+  access: write
+  confirmation: true
+  description: Record a demo journey walkthrough.
+- name: update_start_page
+  category: start-pages
+  access: write
+  confirmation: true
+  description: Update a visitor-facing start page.
+- name: duplicate_start_page
+  category: start-pages
+  access: write
+  confirmation: true
+  description: Duplicate an existing start page.
+- name: update_agent_system_prompt
+  category: agents
+  access: write
+  confirmation: true
+  description: Change the demo agent's system prompt.
+- name: add_knowledge_file
+  category: knowledge
+  access: write
+  confirmation: true
+  description: Add a knowledge file to an agent.
+- name: update_qa_answer
+  category: qa
+  access: write
+  confirmation: true
+  description: Update a curated Q&A answer.
+- name: delete_qa_answer
+  category: qa
+  access: destructive
+  confirmation: true
+  description: Delete a curated Q&A answer.
+- name: create_api_key
+  category: api-keys
+  access: write
+  confirmation: true
+  description: Mint a new Karumi Public API key for the organization.
+- name: revoke_api_key
+  category: api-keys
+  access: destructive
+  confirmation: true
+  description: Revoke an existing Karumi Public API key.
+defects:
+- id: documented-mcp-host-does-not-resolve
+  severity: high
+  detail: >-
+    https://mcp.karumi.ai, the connector URL published at
+    https://www.karumi.ai/mcp-documentation, returns DNS NODATA (no A/AAAA record).
+    A user following the documented setup cannot connect. The working endpoint is
+    https://api.karumi.ai/mcp/.
+  observed: '2026-08-13'
+- id: stale-resource-documentation-link
+  severity: low
+  detail: >-
+    The protected-resource document points resource_documentation at
+    https://api.karumi.ai/docs, which is served behind a Cloudflare managed challenge
+    (HTTP 403 to non-browser clients). The reachable API docs are at
+    https://api.karumi.ai/api/v1/docs.
+  observed: '2026-08-13'
+x-evidence:
+- url: https://www.karumi.ai/mcp-documentation
+  http_status: 200
+- url: https://api.karumi.ai/mcp/
+  http_status: 401
+- url: https://api.karumi.ai/.well-known/oauth-protected-resource
+  http_status: 200
+- url: https://mcp.karumi.ai/
+  http_status: 0
+  note: DNS NODATA — no connection made.

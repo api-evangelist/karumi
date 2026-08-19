@@ -1,0 +1,57 @@
+generated: '2026-08-13'
+method: searched
+source: https://www.karumi.ai/pricing
+http_status: 200
+checked: '2026-08-13'
+currency: USD
+billing_period: month
+plan_count: 2
+free_tier: false
+free_trial: false
+note: >-
+  Karumi publishes one self-serve price and one contact-sales tier. Quotas are stated in
+  product units (agents, languages, seats, demo sessions), not API units — there is no
+  API call allowance, no per-request price and no overage schedule anywhere on the
+  pricing page. API and MCP access are not metered separately; "MCP connection" is listed
+  as an included feature on both tiers, so the Public API and MCP server appear to ride
+  on the plan rather than being priced.
+plans:
+- name: Self-Serve
+  price: 900
+  currency: USD
+  billing_period: month
+  display_price: $900/month
+  contact_sales: false
+  limits:
+    agents: 1
+    languages: 1
+    seats: 3
+    demo_sessions: 100
+  overage: null
+  features:
+  - Agent builder access
+  - Data export to CRM
+  - MCP connection
+- name: Enterprise
+  price: null
+  currency: USD
+  billing_period: null
+  display_price: Custom price
+  contact_sales: true
+  limits:
+    agents: custom
+    languages: custom
+    seats: unlimited
+    demo_sessions: custom
+  overage: null
+  features:
+  - Enterprise SLAs
+  - SOC 2 Type II & ISO 27001 compliance
+  - Dedicated server capacity
+  - Agent builder access
+  - Data export to CRM
+  - MCP connection
+gaps:
+- No API-specific pricing, rate allowance or overage rate is published.
+- The Self-Serve quota is 100 demo sessions/month, which is the only hard consumption
+  ceiling a consumer can plan against; nothing states what happens when it is exceeded.

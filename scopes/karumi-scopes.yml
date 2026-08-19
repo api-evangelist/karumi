@@ -1,0 +1,70 @@
+generated: '2026-08-13'
+method: probed
+source: https://api.karumi.ai/.well-known/oauth-protected-resource
+docs: https://www.karumi.ai/mcp-documentation
+applies_to: Karumi MCP Server (https://api.karumi.ai/mcp/)
+note: >-
+  Karumi's OpenAPI declares no oauth2 security scheme — the Public API is API-key only.
+  The OAuth surface belongs to the MCP server, which advertises RFC 9728
+  protected-resource metadata and delegates to a Supabase Auth authorization server.
+  The scopes below are read verbatim from that authorization server's RFC 8414 metadata
+  (scopes_supported). They are Supabase's standard OIDC scope set, NOT Karumi-defined
+  permissions: Karumi publishes no scope or permission reference page. Per-tool
+  authorization is instead enforced two ways — server-side organization scoping ("access
+  is scoped to the organization(s) your account belongs to") and client-side confirmation
+  on the 13 write/destructive tools. That confirmation model is captured in
+  mcp/karumi-mcp.yml, not here.
+schemes:
+- name: OAuth2
+  type: oauth2
+  authorization_server: https://qmfmxcidbawbvkcstvio.supabase.co/auth/v1
+  resource: https://api.karumi.ai/mcp
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://qmfmxcidbawbvkcstvio.supabase.co/auth/v1/oauth/authorize
+    tokenUrl: https://qmfmxcidbawbvkcstvio.supabase.co/auth/v1/oauth/token
+    code_challenge_methods:
+    - S256
+    - plain
+    grant_types:
+    - authorization_code
+    - refresh_token
+  sources:
+  - well-known/karumi-oauth-authorization-server.json
+scopes:
+- scope: openid
+  description: OpenID Connect authentication; issues an ID token identifying the Karumi
+    user.
+  flows:
+  - authorizationCode
+  sources:
+  - well-known/karumi-oauth-authorization-server.json
+- scope: profile
+  description: Basic profile claims (name, picture, preferred_username, updated_at).
+  flows:
+  - authorizationCode
+  sources:
+  - well-known/karumi-oauth-authorization-server.json
+- scope: email
+  description: Email address and email_verified claim.
+  flows:
+  - authorizationCode
+  sources:
+  - well-known/karumi-oauth-authorization-server.json
+- scope: phone
+  description: Phone number and phone_number_verified claim.
+  flows:
+  - authorizationCode
+  sources:
+  - well-known/karumi-oauth-authorization-server.json
+- scope: offline_access
+  description: Issues a refresh token so the MCP client can keep the connector alive
+    without re-consent.
+  flows:
+  - authorizationCode
+  sources:
+  - well-known/karumi-oauth-authorization-server.json
+gaps:
+- No Karumi-specific resource scopes (e.g. sessions:read, audiences:write) are published,
+  so an MCP client cannot request least-privilege access to a subset of the 37 tools.
+- No scopes/permissions reference page exists on karumi.ai.

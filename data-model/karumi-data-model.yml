@@ -1,0 +1,208 @@
+generated: '2026-08-13'
+method: derived
+source: openapi/karumi-public-api-openapi.json
+note: >-
+  Entity graph derived from OpenAPI $ref links and id-reference fields. Karumi publishes
+  no object reference page, so no id prefixes or domain notes could be searched. One
+  vocabulary divergence is worth carrying: what the Public API calls a `target`, the MCP
+  server calls an `agent`, and both are keyed by `project_id` — see
+  mcp/karumi-tool-crosswalk.yml.
+entities:
+- name: Session
+  schema: PublicSession
+  description: One prospect's conversation with a demo agent.
+  id: id (uuid)
+  key_fields:
+  - project_id
+  - status
+  - created_at
+  - duration_seconds
+  - email
+  - summary
+  - intent_rate
+  - intent_name
+  - labels (free-form object)
+  - metadata (free-form object)
+  - tracked_journeys (free-form object)
+  - goals (array)
+  operations:
+  - list_sessions_sessions_get
+  - get_session_sessions__session_id__get
+- name: SessionWithMessages
+  schema: PublicSessionWithMessages
+  description: A session expanded with its full transcript and recording URL. The
+    detail projection of Session.
+  extends: PublicSession
+  adds:
+  - messages[] -> PublicTranscriptMessage
+  - recording_url
+  operations:
+  - get_session_sessions__session_id__get
+- name: TranscriptMessage
+  schema: PublicTranscriptMessage
+  description: One utterance in a session transcript.
+  id: id (uuid)
+  key_fields:
+  - speaker
+  - content
+  - created_at
+- name: SessionEvent
+  schema: PublicSessionEvent
+  description: A meeting event emitted during a session (page visit, visitor identity,
+    typed event).
+  id: id (uuid)
+  key_fields:
+  - session_id
+  - project_id
+  - event_type
+  - url
+  - visitor_email
+  - metadata
+  - created_at
+  operations:
+  - list_meeting_events_sessions_meeting_events_get
+- name: SessionInsights
+  schema: PublicSessionInsights
+  description: The set of insights derived from one session.
+  operations:
+  - get_session_insights_sessions__session_id__insights_get
+- name: Insight
+  schema: PublicInsight
+  description: One derived insight with confidence and supporting evidence.
+  id: key
+  key_fields:
+  - name
+  - category
+  - status
+  - confidence
+  - value
+  - summary
+  - evidence[] -> PublicInsightEvidence
+- name: InsightEvidence
+  schema: PublicInsightEvidence
+  description: A citation backing an insight.
+- name: Target
+  schema: PublicTarget
+  description: A demo project. Called an "agent" on the MCP surface.
+  id: id (string)
+  key_fields:
+  - name
+  - description
+  - project_id (uuid)
+  - created_at
+  operations:
+  - list_targets_targets_get
+  - get_target_targets__target_id__get
+- name: TargetWithJourneys
+  schema: PublicTargetWithJourneys
+  description: The detail projection of Target, expanded with its journeys.
+  extends: PublicTarget
+  adds:
+  - journeys[] -> PublicUserJourney
+  operations:
+  - get_target_targets__target_id__get
+- name: UserJourney
+  schema: PublicUserJourney
+  description: A reusable demo flow (walkthrough) belonging to a target, optionally
+    flagged as a goal and/or tracked.
+  id: id (uuid)
+  key_fields:
+  - name
+  - description
+  - is_goal
+  - is_tracked
+  - order
+- name: Analytics
+  schema: PublicAnalytics
+  description: Aggregate engagement analytics for the organization or a project.
+  key_fields:
+  - total_sessions
+  - avg_duration_seconds
+  - total_goals_reached
+  - minutes_distribution -> PublicAnalyticsDistribution
+  - rating_distribution -> PublicAnalyticsDistribution
+  - status_distribution -> PublicAnalyticsDistribution
+  - intent_distribution -> PublicAnalyticsDistribution
+  - repeat_visitors[] -> PublicRepeatVisitorBucket
+  - version_comparison[] -> PublicVersionMetrics
+  operations:
+  - get_analytics_analytics_get
+- name: TimelineAnalytics
+  schema: PublicTimelineAnalytics
+  description: Time-series engagement analytics.
+  key_fields:
+  - data points -> PublicTimelineDataPoint
+  operations:
+  - get_analytics_timeline_analytics_timeline_get
+- name: AnalyticsDistribution
+  schema: PublicAnalyticsDistribution
+  description: A distribution made of buckets.
+  key_fields:
+  - buckets -> PublicDistributionBucket
+relationships:
+- from: Session
+  to: Target
+  type: belongs_to
+  via: project_id
+  confidence: high
+  note: PublicSession.project_id matches PublicTarget.project_id (uuid). Also exposed
+    as the project_id filter on list_sessions.
+- from: SessionWithMessages
+  to: TranscriptMessage
+  type: has_many
+  via: messages
+  confidence: high
+- from: SessionEvent
+  to: Session
+  type: belongs_to
+  via: session_id
+  confidence: high
+- from: SessionEvent
+  to: Target
+  type: belongs_to
+  via: project_id
+  confidence: high
+- from: SessionInsights
+  to: Insight
+  type: has_many
+  via: insights
+  confidence: high
+- from: Insight
+  to: InsightEvidence
+  type: has_many
+  via: evidence
+  confidence: high
+- from: TargetWithJourneys
+  to: UserJourney
+  type: has_many
+  via: journeys
+  confidence: high
+- from: UserJourney
+  to: Target
+  type: belongs_to
+  via: nesting
+  confidence: high
+  note: Journeys have no standalone collection; they exist only inside a target.
+- from: Session
+  to: UserJourney
+  type: has_many
+  via: tracked_journeys
+  confidence: medium
+  note: tracked_journeys is an untyped free-form object in the spec, so the join key
+    to UserJourney.id is not machine-verifiable from the contract alone.
+- from: Analytics
+  to: AnalyticsDistribution
+  type: has_many
+  via: minutes_distribution, rating_distribution, status_distribution, intent_distribution
+  confidence: high
+- from: AnalyticsDistribution
+  to: DistributionBucket
+  type: has_many
+  via: buckets
+  confidence: high
+id_conventions:
+  style: uuid
+  prefixes: none published
+  note: PublicTarget.id declares type string with no format, while PublicTarget.project_id
+    is a uuid — the only identifier in the model that is not declared as a uuid.
+render: null

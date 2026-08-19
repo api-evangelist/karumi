@@ -1,0 +1,181 @@
+generated: '2026-08-13'
+method: derived
+source: mcp/karumi-mcp.yml + openapi/karumi-public-api-openapi.json
+note: >-
+  Karumi's two agent-facing surfaces are non-overlapping in almost every direction. The
+  MCP server is the operator surface (37 tools, OAuth, read AND write across the whole
+  workspace); the Public API is a read-only reporting surface (9 GET operations, API key,
+  sessions/insights/analytics/targets only). Because live tools/list is auth-gated (HTTP
+  401), tools are bound to REST operations by name and published semantics, not by
+  comparing inputSchema to parameters — every confidence value below reflects that.
+surfaces:
+  openapi:
+    file: openapi/karumi-public-api-openapi.json
+    base: https://api.karumi.ai/api/v1
+    auth: X-Api-Key header
+    gated: false
+    note: The spec itself is publicly readable at https://api.karumi.ai/api/v1/openapi.json;
+      the operations require a key.
+  mcp:
+    url: https://api.karumi.ai/mcp/
+    auth: OAuth 2.0 authorization code
+    gated: true
+    note: 'tools/list returns 401; tool list taken from the provider''s published
+      documentation at https://www.karumi.ai/mcp-documentation.'
+  graphql:
+    present: false
+crosswalk:
+- tool: list_sessions
+  category: sessions
+  rest:
+  - list_sessions_sessions_get
+  binding: rest
+  confidence: high
+  note: Same capability and same name stem. REST filters by project_id/status/start_date/end_date
+    with limit+offset.
+- tool: get_session_detail
+  category: sessions
+  rest:
+  - get_session_sessions__session_id__get
+  binding: rest
+  confidence: high
+  note: REST GET /sessions/{session_id} returns PublicSessionWithMessages — the session
+    plus its full transcript, which is what the tool is documented to return.
+- tool: get_recording_status
+  category: sessions
+  rest:
+  - download_session_recording_sessions__session_id__recording_get
+  binding: rest
+  confidence: medium
+  note: The REST operation downloads the recording; the MCP tool reports whether one
+    is available. Related but not identical — the tool is likely a HEAD-equivalent over
+    the same resource.
+- tool: get_agent_analytics
+  category: analytics
+  rest:
+  - get_analytics_analytics_get
+  - get_analytics_timeline_analytics_timeline_get
+  binding: rest
+  confidence: medium
+  note: Fans out. REST splits aggregate analytics from the time-series timeline; the
+    single MCP tool covers agent engagement analytics over both.
+- tool: list_agents
+  category: agents
+  rest:
+  - list_targets_targets_get
+  binding: rest
+  confidence: medium
+  note: >-
+    Vocabulary divergence, not a capability gap. The MCP documentation calls a demo
+    project an "agent" identified by a project UUID; the Public API calls the same
+    object a "target" carrying project_id. Confirmed by shape — PublicTarget has
+    id/name/description/project_id/created_at, which is the agent record the tool
+    lists.
+- tool: get_agent
+  category: agents
+  rest:
+  - get_target_targets__target_id__get
+  binding: rest
+  confidence: medium
+  note: Same target/agent naming divergence. REST returns PublicTargetWithJourneys,
+    adding the journey list.
+- tool: get_session_summaries
+  category: sessions
+  rest:
+  - list_sessions_sessions_get
+  binding: rest
+  confidence: low
+  note: PublicSession carries a `summary` field, so summaries are reachable over REST,
+    but there is no dedicated summaries operation. Mapping is by data, not by operation.
+mcp_only:
+- tool: list_organizations
+  reason: The Public API is scoped to one organization by the API key; there is no
+    organization resource in the spec.
+- tool: search_transcripts
+  reason: No keyword search operation in the Public API. Transcripts are only reachable
+    one session at a time via GET /sessions/{session_id}.
+- tool: semantic_search
+  reason: No semantic/embedding search operation exists in the Public API.
+- tool: list_leads
+  reason: No leads resource in the Public API.
+- tool: list_companies
+  reason: No companies resource in the Public API.
+- tool: list_audiences
+  reason: No audiences resource in the Public API.
+- tool: get_audience
+  reason: No audiences resource in the Public API.
+- tool: create_audience
+  reason: The Public API is read-only; no write operations exist.
+- tool: update_audience
+  reason: The Public API is read-only; no write operations exist.
+- tool: delete_audience
+  reason: The Public API is read-only; no write operations exist.
+- tool: list_journeys
+  reason: Journeys are only exposed nested inside PublicTargetWithJourneys; there is
+    no standalone journeys collection.
+- tool: get_journey
+  reason: No standalone journey resource in the Public API.
+- tool: update_journey_script
+  reason: The Public API is read-only; no write operations exist.
+- tool: record_journey
+  reason: The Public API is read-only; no write operations exist.
+- tool: list_start_pages
+  reason: No start-pages resource in the Public API.
+- tool: get_start_page
+  reason: No start-pages resource in the Public API.
+- tool: update_start_page
+  reason: The Public API is read-only; no write operations exist.
+- tool: duplicate_start_page
+  reason: The Public API is read-only; no write operations exist.
+- tool: update_agent_system_prompt
+  reason: The Public API is read-only; no write operations exist.
+- tool: list_knowledge
+  reason: No knowledge resource in the Public API.
+- tool: list_knowledge_spaces
+  reason: No knowledge-spaces resource in the Public API.
+- tool: add_knowledge_file
+  reason: The Public API is read-only; no write operations exist.
+- tool: list_voices
+  reason: No voices resource in the Public API.
+- tool: list_qa_questions
+  reason: No Q&A resource in the Public API.
+- tool: list_qa_answers
+  reason: No Q&A resource in the Public API.
+- tool: answer_question
+  reason: Server-side composite over agent knowledge; no REST equivalent.
+- tool: update_qa_answer
+  reason: The Public API is read-only; no write operations exist.
+- tool: delete_qa_answer
+  reason: The Public API is read-only; no write operations exist.
+- tool: list_api_keys
+  reason: Key management is a workspace function; no keys resource in the Public API.
+- tool: create_api_key
+  reason: Key management is a workspace function; no keys resource in the Public API.
+- tool: revoke_api_key
+  reason: Key management is a workspace function; no keys resource in the Public API.
+rest_only:
+- capability: session insights
+  operations:
+  - get_session_insights_sessions__session_id__insights_get
+  note: PublicSessionInsights with per-insight confidence and evidence has no MCP tool.
+- capability: meeting events
+  operations:
+  - list_meeting_events_sessions_meeting_events_get
+  note: The PublicSessionEvent stream (event_type, url, visitor_email, metadata) is
+    REST-only.
+- capability: analytics timeline
+  operations:
+  - get_analytics_timeline_analytics_timeline_get
+  note: Bound above only as part of a fan-out from get_agent_analytics; there is no
+    dedicated timeline tool.
+coverage:
+  mcp_tools_published: 37
+  mcp_tools_bound_to_rest: 7
+  mcp_only: 31
+  rest_operations_total: 9
+  rest_operations_with_a_tool: 7
+  rest_only_capabilities: 3
+  note: >-
+    get_session_summaries and get_agent_analytics both bind to operations already
+    claimed by another tool, so bound tools (7) and covered operations (7) are not a
+    one-to-one set.

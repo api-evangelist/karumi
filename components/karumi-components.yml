@@ -1,0 +1,93 @@
+generated: '2026-08-13'
+method: searched
+source: https://www.karumi.ai/ (embed snippet in page source) + https://app.karumi.ai/chat.js
+note: >-
+  Karumi ships one first-party embeddable client-side component, the Chat Bar, plus two
+  hosted visitor-facing demo surfaces. There is no components documentation page — the
+  component's option reference is the header comment of the served script itself, which
+  is where the options below are read from verbatim. Karumi dogfoods the widget on its
+  own marketing site.
+families:
+- name: Chat Bar
+  kind: embeddable-widget
+  loader: https://app.karumi.ai/chat.js
+  distribution: cdn
+  pinned: false
+  size_bytes: 425868
+  content_type: application/javascript
+  http_status: 200
+  observed: '2026-08-13'
+  install: '<script src="https://app.karumi.ai/chat.js" data-target-id="YOUR_TARGET_ID"></script>'
+  description: >-
+    A chat bar pinned to the bottom-center of any page. A visitor types a question, the
+    bar expands into a chat panel and the AI assistant's reply streams in. An optional
+    action button (for example "Book a demo") sits next to the bar and always opens in a
+    new tab. Hovering reveals a control that minimizes the chat into an "Ask <Title>"
+    pill docked bottom-right.
+  configuration:
+    style: html data attributes
+    defaults: fetched from the server per target-id when the attribute is omitted
+    options:
+    - name: data-target-id
+      required: true
+      description: Target ID for the chat.
+    - name: data-placeholder
+      description: Input placeholder. Default fetched from server, or "Ask anything...".
+    - name: data-color
+      description: Primary color. Default fetched from server, or "#ff6467".
+    - name: data-action-label
+      description: Action button label. Default fetched from server.
+    - name: data-action-icon
+      description: 'Action button icon preset: calendar, phone, arrow-right,
+        external-link, message-circle, sparkles. Default calendar.'
+    - name: data-action-url
+      description: Action button URL; always opens in a new tab.
+    - name: data-avatar-url
+      description: Avatar image URL, replacing the default Karumi icon.
+    - name: data-title
+      description: Panel header title. Default fetched from server, falling back to
+        the agent name, then "Assistant".
+    - name: data-subtitle
+      description: Smaller muted line under the panel header title. Hidden when empty.
+    - name: data-layout
+      description: 'On-page position: center (default) or right. Legacy presets
+        bar-center/pill-center/pill-right are accepted and normalized.'
+    - name: data-default-start
+      description: 'Initial resting state: pill, collapsed (default) or expanded.'
+    - name: data-footer-caption
+      description: Small muted caption at the bottom of the expanded panel.
+    - name: data-loading-style
+      description: 'Waiting indicator: "dots" (default) or "text" (phrase-cycling
+        shimmer line).'
+    - name: data-language
+      description: 'UI language for the widget''s fixed text: en (default), es, de, fr,
+        it, nl, pt. Accepts a base or full BCP-47 code; unknown codes fall back to
+        English. Operator copy (title, messages) is not translated by this.'
+    - name: data-movable-launcher
+      description: '"true" lets the minimized pill be dragged.'
+  used_by_provider:
+  - url: https://www.karumi.ai/
+    snippet: '<script src="https://app.karumi.ai/chat.js" data-target-id="RsMJV7jySIC8VB"></script>'
+- name: Hosted demo surfaces
+  kind: hosted-page
+  description: >-
+    Visitor-facing pages served from app.karumi.ai that host a live demo session. An
+    "audience" is a shareable, customizable entry point with its own URL, and a "start
+    page" is the landing page rendered at that URL. Both are managed from the workspace
+    or via the MCP tools list_audiences / get_audience / create_audience /
+    update_audience / list_start_pages / get_start_page / update_start_page /
+    duplicate_start_page.
+  patterns:
+  - https://app.karumi.ai/meet/{session_uuid}
+  - https://app.karumi.ai/meet/start/{start_page_uuid}
+  observed:
+  - https://app.karumi.ai/meet/99a97b55-e2ae-4ce6-9b07-31d4df076615
+  - https://app.karumi.ai/meet/start/d461afa6-f0d8-4bbe-83ac-ee88a7dbc303
+  source: linked from https://www.karumi.ai/ and https://www.karumi.ai/product
+gaps:
+- No versioned or pinned distribution — https://app.karumi.ai/chat.js floats to latest,
+  so a site owner cannot pin a build or tell what they are serving.
+- No integrity attribute (SRI) on the published snippet.
+- No components/embed documentation page; the option reference exists only inside the
+  script.
+- No npm package for the widget; see packages/karumi-packages.yml.

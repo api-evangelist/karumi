@@ -1,0 +1,74 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the Karumi Public API
+  version: 1.0.0
+extends: openapi/karumi-public-api-openapi.json
+x-generated: '2026-08-13'
+x-method: generated
+x-source: >-
+  Derived from openapi/karumi-public-api-openapi.json (harvested verbatim from
+  https://api.karumi.ai/api/v1/openapi.json) plus observed live behaviour of
+  https://api.karumi.ai/api/v1/sessions. The harvested spec is never mutated.
+actions:
+- target: $.info
+  update:
+    x-apievangelist-profile: https://apis.io/provider/karumi
+    x-apievangelist-harvested: '2026-08-13'
+    contact:
+      name: Karumi
+      url: https://www.karumi.ai/contact-demo
+      email: founders@karumi.ai
+    termsOfService: https://www.karumi.ai/terms
+- target: $.servers
+  description: >-
+    The harvested spec declares only the relative server "/api/v1", which is unusable
+    by a client that did not fetch the document from the API host. Add the absolute
+    production base URL observed live.
+  update:
+  - url: https://api.karumi.ai/api/v1
+    description: Production
+- target: $.components
+  description: >-
+    The harvested spec declares NO securitySchemes. Authentication is stated only in
+    prose in info.description and modelled as an optional x-api-key header parameter
+    on every operation, yet the API returns 401 {"detail":"Missing X-Api-Key header"}
+    without it. Declare the scheme the API actually enforces.
+  update:
+    securitySchemes:
+      ApiKeyAuth:
+        type: apiKey
+        in: header
+        name: X-Api-Key
+        description: Organization API key. Create and revoke keys from the Karumi
+          workspace, or via the create_api_key / revoke_api_key MCP tools.
+- target: $
+  description: Apply the API key requirement globally, as the server enforces it.
+  update:
+    security:
+    - ApiKeyAuth: []
+- target: $.paths.*.get.responses
+  description: >-
+    Every operation can return 401 when the key is missing or invalid; the harvested
+    spec documents only 200 and 422.
+  update:
+    '401':
+      description: Missing or invalid X-Api-Key header.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              detail:
+                type: string
+          example:
+            detail: Missing X-Api-Key header
+- target: $.tags
+  description: Declare the three tag groups the operations already use.
+  update:
+  - name: Sessions
+    description: Demo sessions, transcripts, insights, recordings and meeting events.
+  - name: Analytics
+    description: Aggregate and time-series engagement analytics.
+  - name: Targets
+    description: Demo projects (called "agents" in the Karumi MCP surface) and their
+      user journeys.

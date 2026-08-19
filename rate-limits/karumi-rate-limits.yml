@@ -1,0 +1,56 @@
+generated: '2026-08-13'
+method: probed
+source: live responses from https://api.karumi.ai/api/v1/ + https://api.karumi.ai/mcp/
+checked: '2026-08-13'
+limit_count: 0
+note: >-
+  Karumi publishes no rate limits. There is no rate-limit or throttling section in the
+  Swagger/ReDoc reference (the only API documentation that exists), no limits on the
+  pricing page, and no RateLimit-*, X-RateLimit-* or Retry-After header on any response
+  observed on 2026-08-13 — including the 401 from GET /api/v1/sessions and the 401 from
+  POST /mcp/. An honest zero: limits may well be enforced server-side, but nothing is
+  signalled to a client, so an agent has no runtime backoff signal to read.
+limits: []
+headers:
+  published: []
+  observed: []
+  ratelimit_draft: false
+  x_ratelimit: false
+  retry_after: false
+exhaustion_status: unknown
+page_size_caps:
+- operation: list_sessions_sessions_get
+  parameter: limit
+  default: 100
+  minimum: 1
+  maximum: 500
+  note: A page-size ceiling, not a rate limit. Enforced by the spec and returned as a
+    422 validation error when exceeded.
+- operation: list_meeting_events_sessions_meeting_events_get
+  parameter: limit
+  note: Same limit/offset pagination contract; see conventions/karumi-conventions.yml.
+quota_ceilings:
+- scope: plan
+  unit: demo sessions
+  value: 100
+  period: month
+  plan: Self-Serve
+  source: https://www.karumi.ai/pricing
+  note: A product consumption quota, not an API rate limit. Recorded because it is the
+    only published ceiling of any kind.
+edge_protection:
+  provider: Cloudflare
+  note: >-
+    api.karumi.ai serves a Cloudflare managed challenge (HTTP 403, cf-mitigated:
+    challenge) on /, /docs, /redoc, /health and /openapi.json to non-browser clients,
+    while /api/v1/* answers normally. That is bot mitigation rather than rate limiting,
+    but it is the throttling behaviour a machine client will actually meet first.
+  evidence:
+  - url: https://api.karumi.ai/openapi.json
+    http_status: 403
+  - url: https://api.karumi.ai/api/v1/openapi.json
+    http_status: 200
+gaps:
+- No documented per-key or per-organization request rate.
+- No standard rate-limit response headers.
+- No documented 429 behaviour or Retry-After contract.

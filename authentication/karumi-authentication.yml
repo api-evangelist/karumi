@@ -1,0 +1,86 @@
+generated: '2026-08-13'
+method: searched
+source: openapi/karumi-public-api-openapi.json
+docs: https://www.karumi.ai/mcp-documentation
+evidence:
+- url: https://api.karumi.ai/api/v1/openapi.json
+  http_status: 200
+  note: info.description states "Authenticate using the X-Api-Key header with your
+    organization's API key."
+- url: https://api.karumi.ai/api/v1/sessions
+  http_status: 401
+  note: 'Unauthenticated GET returns {"detail":"Missing X-Api-Key header"} — the
+    key requirement was observed live, not only read from the spec.'
+- url: https://api.karumi.ai/mcp/
+  http_status: 401
+  note: 'Unauthenticated MCP tools/list returns {"error": "unauthorized"} with
+    WWW-Authenticate: Bearer resource_metadata="https://api.karumi.ai/.well-known/oauth-protected-resource"
+    — a correct RFC 9728 challenge.'
+- url: https://api.karumi.ai/.well-known/oauth-protected-resource
+  http_status: 200
+summary:
+  types:
+  - apiKey
+  - oauth2
+  api_key_in:
+  - header
+  oauth2_flows:
+  - authorizationCode
+  surfaces: 2
+schemes:
+- name: X-Api-Key
+  type: apiKey
+  in: header
+  parameter_name: x-api-key
+  applies_to: Karumi Public API (https://api.karumi.ai/api/v1)
+  scope: organization
+  sources:
+  - openapi/karumi-public-api-openapi.json
+  note: >-
+    The spec does NOT declare this in components.securitySchemes. It is modelled as an
+    optional (required:false) `x-api-key` header parameter on all nine operations, with
+    the requirement stated in prose in info.description. The API in fact rejects
+    unauthenticated calls with HTTP 401. This is a real spec defect worth reporting to the
+    provider: a machine reading securitySchemes alone would conclude the API is open.
+    overlays/karumi-public-api-overlay.yaml records the corrected security model without
+    mutating the harvested spec.
+  key_management: >-
+    Organization API keys are created and revoked from the Karumi workspace; the MCP
+    server exposes list_api_keys, create_api_key and revoke_api_key tools for the same
+    lifecycle.
+- name: OAuth2
+  type: oauth2
+  applies_to: Karumi MCP Server (https://api.karumi.ai/mcp/)
+  flows:
+  - flow: authorizationCode
+    pkce: true
+    pkce_methods:
+    - S256
+    - plain
+    authorizationUrl: https://qmfmxcidbawbvkcstvio.supabase.co/auth/v1/oauth/authorize
+    tokenUrl: https://qmfmxcidbawbvkcstvio.supabase.co/auth/v1/oauth/token
+    scopes:
+    - openid
+    - profile
+    - email
+    - phone
+    - offline_access
+  bearer_methods:
+  - header
+  dynamic_client_registration: https://qmfmxcidbawbvkcstvio.supabase.co/auth/v1/oauth/clients/register
+  protected_resource_metadata: https://api.karumi.ai/.well-known/oauth-protected-resource
+  authorization_server: https://qmfmxcidbawbvkcstvio.supabase.co/auth/v1
+  sources:
+  - well-known/karumi-oauth-protected-resource.json
+  - well-known/karumi-oauth-authorization-server.json
+  note: >-
+    Karumi delegates MCP authorization to its Supabase Auth project rather than running
+    its own authorization server, so the RFC 8414 metadata is served from supabase.co and
+    the scopes are Supabase's OIDC set, not Karumi-specific permissions. Karumi's own
+    documentation describes the flow as "OAuth 2.0 (authorization-code flow over HTTPS)
+    with explicit user consent" and says access is scoped to the organizations the
+    authenticating user belongs to — that organization scoping is enforced server-side,
+    not expressed as an OAuth scope.
+revocation:
+  user: Karumi account settings (disconnect the connector or revoke access)
+  source: https://www.karumi.ai/mcp-documentation
