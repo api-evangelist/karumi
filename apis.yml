@@ -40,6 +40,20 @@ tags:
 - Product Demos
 - Sales Enablement
 - Go-To-Market
+- Software-as-a-Service
+- Conversational AI
+- Video
+- Y Combinator
+- MCP
+- agent-native
+- Analytics
+- Conversation Intelligence
+tags_raw:
+- Company
+- AI Agents
+- Product Demos
+- Sales Enablement
+- Go-To-Market
 - SaaS
 - Conversational AI
 - Video
@@ -58,6 +72,12 @@ apis:
   humanURL: https://api.karumi.ai/api/v1/docs
   baseURL: https://api.karumi.ai/api/v1
   tags:
+  - Sessions
+  - Transcripts
+  - Analytics
+  - Conversation Intelligence
+  - Product Demos
+  tags_raw:
   - sessions
   - transcripts
   - analytics
@@ -90,6 +110,11 @@ apis:
   humanURL: https://www.karumi.ai/mcp-documentation
   baseURL: https://api.karumi.ai/mcp/
   tags:
+  - MCP
+  - agent-native
+  - Product Demos
+  - Sales Enablement
+  tags_raw:
   - mcp
   - agent-native
   - product-demos
