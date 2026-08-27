@@ -63,50 +63,13 @@ tags_raw:
 - analytics
 - conversation-intelligence
 apis:
-- name: Karumi Public API
-  description: Read-only REST API over Karumi session data — demo sessions and their
-    full transcripts, per-session insights, session recordings, meeting events,
-    aggregate and time-series analytics, and the targets (demo projects) with their
-    user journeys. OpenAPI 3.1.0, JSON, limit/offset pagination, authenticated with
-    an organization API key sent in the X-Api-Key header.
-  humanURL: https://api.karumi.ai/api/v1/docs
-  baseURL: https://api.karumi.ai/api/v1
-  tags:
-  - Sessions
-  - Transcripts
-  - Analytics
-  - Conversation Intelligence
-  - Product Demos
-  tags_raw:
-  - sessions
-  - transcripts
-  - analytics
-  - conversation-intelligence
-  - product-demos
-  properties:
-  - type: OpenAPI
-    url: openapi/karumi-public-api-openapi.json
-  - type: Overlay
-    url: overlays/karumi-public-api-overlay.yaml
-  - type: Documentation
-    url: https://api.karumi.ai/api/v1/docs
-  - type: APIReference
-    url: https://api.karumi.ai/api/v1/redoc
-  - type: Authentication
-    url: authentication/karumi-authentication.yml
-  - type: Conventions
-    url: conventions/karumi-conventions.yml
-  - type: DataModel
-    url: data-model/karumi-data-model.yml
-  - type: ErrorCatalog
-    url: errors/karumi-problem-types.yml
 - name: Karumi MCP Server
-  description: Hosted, remote MCP server that exposes a Karumi workspace to any
-    MCP-compatible client. 37 published tools cover organizations, agents, sessions,
-    transcripts (keyword and semantic search), leads, companies, audiences, journeys,
-    start pages, knowledge, voices, Q&A and API keys; 13 of them are write or
-    destructive and require client confirmation. Authenticated with OAuth 2.0
-    authorization code over HTTPS, advertising RFC 9728 protected-resource metadata.
+  description: >-
+    Hosted, remote MCP server that exposes a Karumi workspace to any MCP-compatible client. 37 published
+    tools cover organizations, agents, sessions, transcripts (keyword and semantic search), leads, companies,
+    audiences, journeys, start pages, knowledge, voices, Q&A and API keys; 13 of them are write or destructive
+    and require client confirmation. Authenticated with OAuth 2.0 authorization code over HTTPS, advertising
+    RFC 9728 protected-resource metadata.
   humanURL: https://www.karumi.ai/mcp-documentation
   baseURL: https://api.karumi.ai/mcp/
   tags:
@@ -130,6 +93,72 @@ apis:
     url: https://www.karumi.ai/mcp-documentation
   - type: OAuthScopes
     url: scopes/karumi-scopes.yml
+- aid: karumi:karumi-analytics-api
+  name: Karumi Analytics API
+  description: The Analytics API from Karumi — 2 operation(s) for analytics.
+  humanURL: https://api.karumi.ai/api/v1/docs
+  baseURL: https://api.karumi.ai/api/v1
+  tags:
+  - Analytics
+  properties:
+  - type: OpenAPI
+    url: openapi/karumi-analytics-api-openapi.yml
+  - type: Documentation
+    url: https://api.karumi.ai/api/v1/docs
+  - type: APIReference
+    url: https://api.karumi.ai/api/v1/redoc
+  - type: Authentication
+    url: authentication/karumi-authentication.yml
+  - type: Conventions
+    url: conventions/karumi-conventions.yml
+  - type: DataModel
+    url: data-model/karumi-data-model.yml
+  - type: ErrorCatalog
+    url: errors/karumi-problem-types.yml
+- aid: karumi:karumi-sessions-api
+  name: Karumi Sessions API
+  description: The Sessions API from Karumi — 5 operation(s) for sessions.
+  humanURL: https://api.karumi.ai/api/v1/docs
+  baseURL: https://api.karumi.ai/api/v1
+  tags:
+  - Sessions
+  properties:
+  - type: OpenAPI
+    url: openapi/karumi-sessions-api-openapi.yml
+  - type: Documentation
+    url: https://api.karumi.ai/api/v1/docs
+  - type: APIReference
+    url: https://api.karumi.ai/api/v1/redoc
+  - type: Authentication
+    url: authentication/karumi-authentication.yml
+  - type: Conventions
+    url: conventions/karumi-conventions.yml
+  - type: DataModel
+    url: data-model/karumi-data-model.yml
+  - type: ErrorCatalog
+    url: errors/karumi-problem-types.yml
+- aid: karumi:karumi-targets-api
+  name: Karumi Targets API
+  description: The Targets API from Karumi — 2 operation(s) for targets.
+  humanURL: https://api.karumi.ai/api/v1/docs
+  baseURL: https://api.karumi.ai/api/v1
+  tags:
+  - Targets
+  properties:
+  - type: OpenAPI
+    url: openapi/karumi-targets-api-openapi.yml
+  - type: Documentation
+    url: https://api.karumi.ai/api/v1/docs
+  - type: APIReference
+    url: https://api.karumi.ai/api/v1/redoc
+  - type: Authentication
+    url: authentication/karumi-authentication.yml
+  - type: Conventions
+    url: conventions/karumi-conventions.yml
+  - type: DataModel
+    url: data-model/karumi-data-model.yml
+  - type: ErrorCatalog
+    url: errors/karumi-problem-types.yml
 common:
 - type: AgenticAccess
   url: agentic-access/karumi-agentic-access.yml
