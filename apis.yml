@@ -86,8 +86,8 @@ apis:
   tags:
   - MCP
   - agent-native
-  - Product Demos
-  - Sales Enablement
+  - product-demos
+  - sales-enablement
   tags_raw:
   - mcp
   - agent-native
