@@ -1,0 +1,376 @@
+openapi: 3.2.0
+info:
+  title: Karumi Public Analytics API
+  description: Public API for accessing Karumi session data. Authenticate using the X-Api-Key header with your organization's API key.
+  version: 1.0.0
+servers:
+- url: /api/v1
+tags:
+- name: Analytics
+paths:
+  /analytics:
+    get:
+      tags:
+      - Analytics
+      summary: Get Analytics
+      description: 'Get aggregated analytics for the organization.
+
+
+        Returns session counts, duration distributions, rating distributions,
+
+        status breakdowns, intent distributions, repeat visitor data, and version metrics.'
+      operationId: get_analytics_analytics_get
+      parameters:
+      - name: project_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          description: Filter by project ID
+          title: Project Id
+        description: Filter by project ID
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          description: Filter sessions after this date
+          title: Start Date
+        description: Filter sessions after this date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          description: Filter sessions before this date
+          title: End Date
+        description: Filter sessions before this date
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicAnalytics'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /analytics/timeline:
+    get:
+      tags:
+      - Analytics
+      summary: Get Analytics Timeline
+      description: 'Get time-series analytics data.
+
+
+        Returns session counts, error counts, average duration, and goals
+
+        grouped by the specified time granularity.'
+      operationId: get_analytics_timeline_analytics_timeline_get
+      parameters:
+      - name: project_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          description: Filter by project ID
+          title: Project Id
+        description: Filter by project ID
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          description: Filter sessions after this date
+          title: Start Date
+        description: Filter sessions after this date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          description: Filter sessions before this date
+          title: End Date
+        description: Filter sessions before this date
+      - name: granularity
+        in: query
+        required: false
+        schema:
+          enum:
+          - day
+          - week
+          - month
+          type: string
+          description: Time grouping granularity
+          default: day
+          title: Granularity
+        description: Time grouping granularity
+      - name: version
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          description: Filter by agent version
+          title: Version
+        description: Filter by agent version
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicTimelineAnalytics'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    PublicAnalyticsDistribution:
+      properties:
+        buckets:
+          items:
+            $ref: '#/components/schemas/PublicDistributionBucket'
+          type: array
+          title: Buckets
+        total_count:
+          type: integer
+          title: Total Count
+      type: object
+      required:
+      - buckets
+      - total_count
+      title: PublicAnalyticsDistribution
+      description: Distribution data for a single metric.
+    PublicDistributionBucket:
+      properties:
+        label:
+          type: string
+          title: Label
+        count:
+          type: integer
+          title: Count
+      type: object
+      required:
+      - label
+      - count
+      title: PublicDistributionBucket
+      description: A single bucket in a distribution.
+    PublicRepeatVisitorBucket:
+      properties:
+        demo_count:
+          type: integer
+          title: Demo Count
+        visitor_count:
+          type: integer
+          title: Visitor Count
+      type: object
+      required:
+      - demo_count
+      - visitor_count
+      title: PublicRepeatVisitorBucket
+      description: Count of visitors by number of demos taken.
+    PublicTimelineAnalytics:
+      properties:
+        data_points:
+          items:
+            $ref: '#/components/schemas/PublicTimelineDataPoint'
+          type: array
+          title: Data Points
+        granularity:
+          type: string
+          title: Granularity
+        versions:
+          items:
+            type: integer
+          type: array
+          title: Versions
+      type: object
+      required:
+      - data_points
+      - granularity
+      - versions
+      title: PublicTimelineAnalytics
+      description: Time-series analytics data.
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    PublicVersionMetrics:
+      properties:
+        version:
+          type: integer
+          title: Version
+        session_count:
+          type: integer
+          title: Session Count
+        completed_count:
+          type: integer
+          title: Completed Count
+        email_rejected_count:
+          type: integer
+          title: Email Rejected Count
+        error_count:
+          type: integer
+          title: Error Count
+        goals_achieved_count:
+          type: integer
+          title: Goals Achieved Count
+      type: object
+      required:
+      - version
+      - session_count
+      - completed_count
+      - email_rejected_count
+      - error_count
+      - goals_achieved_count
+      title: PublicVersionMetrics
+      description: Metrics for a specific agent version.
+    PublicAnalytics:
+      properties:
+        minutes_distribution:
+          $ref: '#/components/schemas/PublicAnalyticsDistribution'
+        rating_distribution:
+          $ref: '#/components/schemas/PublicAnalyticsDistribution'
+        status_distribution:
+          $ref: '#/components/schemas/PublicAnalyticsDistribution'
+        intent_distribution:
+          $ref: '#/components/schemas/PublicAnalyticsDistribution'
+        repeat_visitors:
+          items:
+            $ref: '#/components/schemas/PublicRepeatVisitorBucket'
+          type: array
+          title: Repeat Visitors
+        version_comparison:
+          items:
+            $ref: '#/components/schemas/PublicVersionMetrics'
+          type: array
+          title: Version Comparison
+        total_sessions:
+          type: integer
+          title: Total Sessions
+        avg_duration_seconds:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Avg Duration Seconds
+        total_goals_reached:
+          type: integer
+          title: Total Goals Reached
+          default: 0
+      type: object
+      required:
+      - minutes_distribution
+      - rating_distribution
+      - status_distribution
+      - intent_distribution
+      - repeat_visitors
+      - version_comparison
+      - total_sessions
+      title: PublicAnalytics
+      description: Analytics data for the organization.
+    PublicTimelineDataPoint:
+      properties:
+        date:
+          type: string
+          format: date-time
+          title: Date
+        session_count:
+          type: integer
+          title: Session Count
+        error_count:
+          type: integer
+          title: Error Count
+        avg_duration_seconds:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Avg Duration Seconds
+        goals_count:
+          type: integer
+          title: Goals Count
+        version:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Version
+      type: object
+      required:
+      - date
+      - session_count
+      - error_count
+      - goals_count
+      title: PublicTimelineDataPoint
+      description: Single data point in the analytics timeline.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError

@@ -1,0 +1,775 @@
+openapi: 3.2.0
+info:
+  title: Karumi Public Sessions API
+  description: Public API for accessing Karumi session data. Authenticate using the X-Api-Key header with your organization's API key.
+  version: 1.0.0
+servers:
+- url: /api/v1
+tags:
+- name: Sessions
+paths:
+  /sessions:
+    get:
+      tags:
+      - Sessions
+      summary: List Sessions
+      description: 'List sessions for the organization.
+
+
+        Returns paginated sessions with optional filtering by project, status, and date range.'
+      operationId: list_sessions_sessions_get
+      parameters:
+      - name: project_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          description: Filter by project ID
+          title: Project Id
+        description: Filter by project ID
+      - name: status
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by status
+          title: Status
+        description: Filter by status
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          description: Filter sessions after this date
+          title: Start Date
+        description: Filter sessions after this date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          description: Filter sessions before this date
+          title: End Date
+        description: Filter sessions before this date
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 500
+          minimum: 1
+          description: Number of sessions to return
+          default: 100
+          title: Limit
+        description: Number of sessions to return
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          description: Number of sessions to skip
+          default: 0
+          title: Offset
+        description: Number of sessions to skip
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSessions'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /sessions/meeting-events:
+    get:
+      tags:
+      - Sessions
+      summary: List Meeting Events
+      description: 'List meeting CTA clicks and bookings across the organization''s sessions.
+
+
+        Each event is returned with the demo visitor''s email so the data can be
+
+        cross-referenced against your own booking records. Filter by project,
+
+        event type, and date range to build per-day click/booking reports.'
+      operationId: list_meeting_events_sessions_meeting_events_get
+      parameters:
+      - name: project_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          description: Filter by project ID
+          title: Project Id
+        description: Filter by project ID
+      - name: event_type
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: 'Filter by event type: ''meeting_cta_clicked'' or ''meeting_booked'''
+          title: Event Type
+        description: 'Filter by event type: ''meeting_cta_clicked'' or ''meeting_booked'''
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          description: Filter events after this date
+          title: Start Date
+        description: Filter events after this date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          description: Filter events before this date
+          title: End Date
+        description: Filter events before this date
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 500
+          minimum: 1
+          description: Number of events to return
+          default: 100
+          title: Limit
+        description: Number of events to return
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          description: Number of events to skip
+          default: 0
+          title: Offset
+        description: Number of events to skip
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSessionEvents'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /sessions/{session_id}:
+    get:
+      tags:
+      - Sessions
+      summary: Get Session
+      description: 'Get a session by ID with optional transcript messages.
+
+
+        Only returns text messages from user and assistant (excludes system messages,
+
+        tool calls, and other internal message types).
+
+
+        The `recording_url` field contains a URL to download the session recording.
+
+        The field is null if the session is still in progress, the recording is
+
+        still processing, or the recording is unavailable.'
+      operationId: get_session_sessions__session_id__get
+      parameters:
+      - name: session_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Session Id
+      - name: include_messages
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: Include transcript messages in response
+          default: false
+          title: Include Messages
+        description: Include transcript messages in response
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicSessionWithMessages'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /sessions/{session_id}/insights:
+    get:
+      tags:
+      - Sessions
+      summary: Get Session Insights
+      description: 'Get AI-extracted insights for a session.
+
+
+        Returns structured insights including prospect context, questions asked,
+
+        use cases discussed, and recommended next steps.'
+      operationId: get_session_insights_sessions__session_id__insights_get
+      parameters:
+      - name: session_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Session Id
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicSessionInsights'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /sessions/{session_id}/recording:
+    get:
+      tags:
+      - Sessions
+      summary: Download Session Recording
+      description: 'Download the session recording as an MP4 file.
+
+
+        This endpoint streams the recording directly with Content-Disposition: attachment,
+
+        forcing a download rather than playing in the browser.'
+      operationId: download_session_recording_sessions__session_id__recording_get
+      parameters:
+      - name: session_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Session Id
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    PublicInsightEvidence:
+      properties:
+        text:
+          type: string
+          title: Text
+        timestamp:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Timestamp
+      type: object
+      required:
+      - text
+      title: PublicInsightEvidence
+      description: Evidence item for a public insight.
+    PublicSessionInsights:
+      properties:
+        session_id:
+          type: string
+          format: uuid
+          title: Session Id
+        status:
+          type: string
+          title: Status
+        generated_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Generated At
+        insights:
+          items:
+            $ref: '#/components/schemas/PublicInsight'
+          type: array
+          title: Insights
+      type: object
+      required:
+      - session_id
+      - status
+      title: PublicSessionInsights
+      description: Session insights response for public API.
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    PublicInsight:
+      properties:
+        key:
+          type: string
+          title: Key
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        category:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Category
+        status:
+          type: string
+          title: Status
+        confidence:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Confidence
+        value:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Value
+        summary:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Summary
+        evidence:
+          items:
+            $ref: '#/components/schemas/PublicInsightEvidence'
+          type: array
+          title: Evidence
+      type: object
+      required:
+      - key
+      - status
+      title: PublicInsight
+      description: AI-extracted insight for public API.
+    PublicSessionWithMessages:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        project_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Project Id
+        duration_seconds:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Duration Seconds
+        status:
+          type: string
+          title: Status
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        email:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Email
+        summary:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Summary
+        intent_rate:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Intent Rate
+        intent_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Intent Name
+        labels:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Labels
+        metadata:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Metadata
+        tracked_journeys:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Tracked Journeys
+        goals:
+          items:
+            type: string
+            format: uuid
+          type: array
+          title: Goals
+          description: IDs of goal journeys completed in this session
+        messages:
+          items:
+            $ref: '#/components/schemas/PublicTranscriptMessage'
+          type: array
+          title: Messages
+        recording_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Recording Url
+          description: 'Presigned URL to download or stream the session recording. Expires in 1 hour - fetch a fresh URL if expired. Null if: session is still in progress, recording is processing, or recording is unavailable.'
+      type: object
+      required:
+      - id
+      - project_id
+      - duration_seconds
+      - status
+      - created_at
+      - email
+      - summary
+      - intent_rate
+      - intent_name
+      - labels
+      - metadata
+      - tracked_journeys
+      title: PublicSessionWithMessages
+      description: Session with optional transcript messages.
+    PaginatedSessionEvents:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/PublicSessionEvent'
+          type: array
+          title: Items
+        total:
+          type: integer
+          title: Total
+        limit:
+          type: integer
+          title: Limit
+        offset:
+          type: integer
+          title: Offset
+      type: object
+      required:
+      - items
+      - total
+      - limit
+      - offset
+      title: PaginatedSessionEvents
+      description: Paginated response for the session events list.
+    PublicSessionEvent:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        session_id:
+          type: string
+          format: uuid
+          title: Session Id
+        project_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Project Id
+        event_type:
+          type: string
+          title: Event Type
+          description: Event type, e.g. 'meeting_cta_clicked' or 'meeting_booked'
+        url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Url
+          description: The meeting link the event relates to
+        visitor_email:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Visitor Email
+          description: Email of the demo visitor, if known
+        metadata:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Metadata
+          description: 'Event-specific data. For ''meeting_booked'': booked contact (first/last name, email), slot timerange, organizer name, and link type.'
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+      type: object
+      required:
+      - id
+      - session_id
+      - project_id
+      - event_type
+      - created_at
+      title: PublicSessionEvent
+      description: A per-session demo event (meeting CTA click / booking) for the public API.
+    PublicSession:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        project_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Project Id
+        duration_seconds:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Duration Seconds
+        status:
+          type: string
+          title: Status
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        email:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Email
+        summary:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Summary
+        intent_rate:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Intent Rate
+        intent_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Intent Name
+        labels:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Labels
+        metadata:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Metadata
+        tracked_journeys:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Tracked Journeys
+        goals:
+          items:
+            type: string
+            format: uuid
+          type: array
+          title: Goals
+          description: IDs of goal journeys completed in this session
+      type: object
+      required:
+      - id
+      - project_id
+      - duration_seconds
+      - status
+      - created_at
+      - email
+      - summary
+      - intent_rate
+      - intent_name
+      - labels
+      - metadata
+      - tracked_journeys
+      title: PublicSession
+      description: Session data exposed via public API.
+    PaginatedSessions:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/PublicSession'
+          type: array
+          title: Items
+        total:
+          type: integer
+          title: Total
+        limit:
+          type: integer
+          title: Limit
+        offset:
+          type: integer
+          title: Offset
+      type: object
+      required:
+      - items
+      - total
+      - limit
+      - offset
+      title: PaginatedSessions
+      description: Paginated response for session list.
+    PublicTranscriptMessage:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        speaker:
+          type: string
+          enum:
+          - user
+          - assistant
+          title: Speaker
+        content:
+          type: string
+          title: Content
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+      type: object
+      required:
+      - id
+      - speaker
+      - content
+      - created_at
+      title: PublicTranscriptMessage
+      description: Transcript message for public API (text only).
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError

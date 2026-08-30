@@ -1,0 +1,218 @@
+openapi: 3.2.0
+info:
+  title: Karumi Public Targets API
+  description: Public API for accessing Karumi session data. Authenticate using the X-Api-Key header with your organization's API key.
+  version: 1.0.0
+servers:
+- url: /api/v1
+tags:
+- name: Targets
+paths:
+  /targets:
+    get:
+      tags:
+      - Targets
+      summary: List Targets
+      description: 'List all targets (demo products) for the organization.
+
+
+        Returns targets across all projects in the organization.'
+      operationId: list_targets_targets_get
+      parameters:
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PublicTarget'
+                title: Response List Targets Targets Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /targets/{target_id}:
+    get:
+      tags:
+      - Targets
+      summary: Get Target
+      description: 'Get a target by ID with its user journeys.
+
+
+        Returns the target and all associated user journeys/goals.'
+      operationId: get_target_targets__target_id__get
+      parameters:
+      - name: target_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Target Id
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicTargetWithJourneys'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    PublicTarget:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        project_id:
+          type: string
+          format: uuid
+          title: Project Id
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+      type: object
+      required:
+      - id
+      - name
+      - description
+      - project_id
+      - created_at
+      title: PublicTarget
+      description: Target (demo product) exposed via public API.
+    PublicTargetWithJourneys:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        project_id:
+          type: string
+          format: uuid
+          title: Project Id
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        journeys:
+          items:
+            $ref: '#/components/schemas/PublicUserJourney'
+          type: array
+          title: Journeys
+      type: object
+      required:
+      - id
+      - name
+      - description
+      - project_id
+      - created_at
+      title: PublicTargetWithJourneys
+      description: Target with its user journeys.
+    PublicUserJourney:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        is_goal:
+          type: boolean
+          title: Is Goal
+        is_tracked:
+          type: boolean
+          title: Is Tracked
+        order:
+          type: integer
+          title: Order
+      type: object
+      required:
+      - id
+      - name
+      - description
+      - is_goal
+      - is_tracked
+      - order
+      title: PublicUserJourney
+      description: User journey/goal exposed via public API.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
