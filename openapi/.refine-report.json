@@ -1,0 +1,27 @@
+{
+  "provider": "karumi",
+  "sources": [
+    "_original/karumi-public-api-openapi.json"
+  ],
+  "outputs": [
+    "karumi-analytics-api-openapi.yml",
+    "karumi-sessions-api-openapi.yml",
+    "karumi-targets-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "karumi-public-api-openapi.json: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "karumi-public-api-openapi.json: declared missing tag: Analytics",
+    "karumi-public-api-openapi.json: declared missing tag: Sessions",
+    "karumi-public-api-openapi.json: declared missing tag: Targets",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "karumi-analytics-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "karumi-sessions-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "karumi-targets-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
+}
