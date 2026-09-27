@@ -53,7 +53,7 @@ tags:
 - Video
 - Y Combinator
 - MCP
-- agent-native
+- Agent-Native
 - Analytics
 - Conversation Intelligence
 tags_raw:
@@ -81,7 +81,7 @@ apis:
   baseURL: https://api.karumi.ai/mcp/
   tags:
   - MCP
-  - agent-native
+  - Agent-Native
   - Product Demos
   - Sales Enablement
   tags_raw:
