@@ -344,53 +344,11 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    PublicInsightEvidence:
-      properties:
-        text:
-          type: string
-          title: Text
-        timestamp:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Timestamp
-      type: object
-      required:
-      - text
-      title: PublicInsightEvidence
-      description: Evidence item for a public insight.
-    PublicTranscriptMessage:
-      properties:
-        id:
-          type: string
-          format: uuid
-          title: Id
-        speaker:
-          type: string
-          enum:
-          - user
-          - assistant
-          title: Speaker
-        content:
-          type: string
-          title: Content
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
-      type: object
-      required:
-      - id
-      - speaker
-      - content
-      - created_at
-      title: PublicTranscriptMessage
-      description: Transcript message for public API (text only).
-    PaginatedSessionEvents:
+    PaginatedSessions:
       properties:
         items:
           items:
-            $ref: '#/components/schemas/PublicSessionEvent'
+            $ref: '#/components/schemas/PublicSession'
           type: array
           title: Items
         total:
@@ -408,62 +366,8 @@ components:
       - total
       - limit
       - offset
-      title: PaginatedSessionEvents
-      description: Paginated response for the session events list.
-    PublicInsight:
-      properties:
-        key:
-          type: string
-          title: Key
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-        category:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Category
-        status:
-          type: string
-          title: Status
-        confidence:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Confidence
-        value:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Value
-        summary:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Summary
-        evidence:
-          items:
-            $ref: '#/components/schemas/PublicInsightEvidence'
-          type: array
-          title: Evidence
-      type: object
-      required:
-      - key
-      - status
-      title: PublicInsight
-      description: AI-extracted insight for public API.
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
+      title: PaginatedSessions
+      description: Paginated response for session list.
     PublicSession:
       properties:
         id:
@@ -549,6 +453,41 @@ components:
       - tracked_journeys
       title: PublicSession
       description: Session data exposed via public API.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     PublicSessionInsights:
       properties:
         session_id:
@@ -575,6 +514,169 @@ components:
       - status
       title: PublicSessionInsights
       description: Session insights response for public API.
+    PublicInsightEvidence:
+      properties:
+        text:
+          type: string
+          title: Text
+        timestamp:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Timestamp
+      type: object
+      required:
+      - text
+      title: PublicInsightEvidence
+      description: Evidence item for a public insight.
+    PublicInsight:
+      properties:
+        key:
+          type: string
+          title: Key
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        category:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Category
+        status:
+          type: string
+          title: Status
+        confidence:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Confidence
+        value:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Value
+        summary:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Summary
+        evidence:
+          items:
+            $ref: '#/components/schemas/PublicInsightEvidence'
+          type: array
+          title: Evidence
+      type: object
+      required:
+      - key
+      - status
+      title: PublicInsight
+      description: AI-extracted insight for public API.
+    PublicSessionEvent:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        session_id:
+          type: string
+          format: uuid
+          title: Session Id
+        project_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Project Id
+        event_type:
+          type: string
+          title: Event Type
+          description: Event type, e.g. 'meeting_cta_clicked' or 'meeting_booked'
+        url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Url
+          description: The meeting link the event relates to
+        visitor_email:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Visitor Email
+          description: Email of the demo visitor, if known
+        metadata:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Metadata
+          description: 'Event-specific data. For ''meeting_booked'': booked contact (first/last name, email), slot timerange, organizer name, and link type.'
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+      type: object
+      required:
+      - id
+      - session_id
+      - project_id
+      - event_type
+      - created_at
+      title: PublicSessionEvent
+      description: A per-session demo event (meeting CTA click / booking) for the public API.
+    PaginatedSessionEvents:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/PublicSessionEvent'
+          type: array
+          title: Items
+        total:
+          type: integer
+          title: Total
+        limit:
+          type: integer
+          title: Limit
+        offset:
+          type: integer
+          title: Offset
+      type: object
+      required:
+      - items
+      - total
+      - limit
+      - offset
+      title: PaginatedSessionEvents
+      description: Paginated response for the session events list.
+    PublicTranscriptMessage:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        speaker:
+          type: string
+          enum:
+          - user
+          - assistant
+          title: Speaker
+        content:
+          type: string
+          title: Content
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+      type: object
+      required:
+      - id
+      - speaker
+      - content
+      - created_at
+      title: PublicTranscriptMessage
+      description: Transcript message for public API (text only).
     PublicSessionWithMessages:
       properties:
         id:
@@ -671,105 +773,3 @@ components:
       - tracked_journeys
       title: PublicSessionWithMessages
       description: Session with optional transcript messages.
-    PublicSessionEvent:
-      properties:
-        id:
-          type: string
-          format: uuid
-          title: Id
-        session_id:
-          type: string
-          format: uuid
-          title: Session Id
-        project_id:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Project Id
-        event_type:
-          type: string
-          title: Event Type
-          description: Event type, e.g. 'meeting_cta_clicked' or 'meeting_booked'
-        url:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Url
-          description: The meeting link the event relates to
-        visitor_email:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Visitor Email
-          description: Email of the demo visitor, if known
-        metadata:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Metadata
-          description: 'Event-specific data. For ''meeting_booked'': booked contact (first/last name, email), slot timerange, organizer name, and link type.'
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
-      type: object
-      required:
-      - id
-      - session_id
-      - project_id
-      - event_type
-      - created_at
-      title: PublicSessionEvent
-      description: A per-session demo event (meeting CTA click / booking) for the public API.
-    PaginatedSessions:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/PublicSession'
-          type: array
-          title: Items
-        total:
-          type: integer
-          title: Total
-        limit:
-          type: integer
-          title: Limit
-        offset:
-          type: integer
-          title: Offset
-      type: object
-      required:
-      - items
-      - total
-      - limit
-      - offset
-      title: PaginatedSessions
-      description: Paginated response for session list.
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError

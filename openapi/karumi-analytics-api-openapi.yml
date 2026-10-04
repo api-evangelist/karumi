@@ -213,51 +213,6 @@ components:
       - goals_achieved_count
       title: PublicVersionMetrics
       description: Metrics for a specific agent version.
-    PublicDistributionBucket:
-      properties:
-        label:
-          type: string
-          title: Label
-        count:
-          type: integer
-          title: Count
-      type: object
-      required:
-      - label
-      - count
-      title: PublicDistributionBucket
-      description: A single bucket in a distribution.
-    PublicTimelineAnalytics:
-      properties:
-        data_points:
-          items:
-            $ref: '#/components/schemas/PublicTimelineDataPoint'
-          type: array
-          title: Data Points
-        granularity:
-          type: string
-          title: Granularity
-        versions:
-          items:
-            type: integer
-          type: array
-          title: Versions
-      type: object
-      required:
-      - data_points
-      - granularity
-      - versions
-      title: PublicTimelineAnalytics
-      description: Time-series analytics data.
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     PublicTimelineDataPoint:
       properties:
         date:
@@ -317,20 +272,15 @@ components:
       - msg
       - type
       title: ValidationError
-    PublicRepeatVisitorBucket:
+    HTTPValidationError:
       properties:
-        demo_count:
-          type: integer
-          title: Demo Count
-        visitor_count:
-          type: integer
-          title: Visitor Count
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
       type: object
-      required:
-      - demo_count
-      - visitor_count
-      title: PublicRepeatVisitorBucket
-      description: Count of visitors by number of demos taken.
+      title: HTTPValidationError
     PublicAnalytics:
       properties:
         minutes_distribution:
@@ -374,3 +324,53 @@ components:
       - total_sessions
       title: PublicAnalytics
       description: Analytics data for the organization.
+    PublicRepeatVisitorBucket:
+      properties:
+        demo_count:
+          type: integer
+          title: Demo Count
+        visitor_count:
+          type: integer
+          title: Visitor Count
+      type: object
+      required:
+      - demo_count
+      - visitor_count
+      title: PublicRepeatVisitorBucket
+      description: Count of visitors by number of demos taken.
+    PublicTimelineAnalytics:
+      properties:
+        data_points:
+          items:
+            $ref: '#/components/schemas/PublicTimelineDataPoint'
+          type: array
+          title: Data Points
+        granularity:
+          type: string
+          title: Granularity
+        versions:
+          items:
+            type: integer
+          type: array
+          title: Versions
+      type: object
+      required:
+      - data_points
+      - granularity
+      - versions
+      title: PublicTimelineAnalytics
+      description: Time-series analytics data.
+    PublicDistributionBucket:
+      properties:
+        label:
+          type: string
+          title: Label
+        count:
+          type: integer
+          title: Count
+      type: object
+      required:
+      - label
+      - count
+      title: PublicDistributionBucket
+      description: A single bucket in a distribution.

@@ -83,6 +83,32 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
     HTTPValidationError:
       properties:
         detail:
@@ -92,10 +118,11 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
-    PublicTarget:
+    PublicUserJourney:
       properties:
         id:
           type: string
+          format: uuid
           title: Id
         name:
           type: string
@@ -105,23 +132,25 @@ components:
           - type: string
           - type: 'null'
           title: Description
-        project_id:
-          type: string
-          format: uuid
-          title: Project Id
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
+        is_goal:
+          type: boolean
+          title: Is Goal
+        is_tracked:
+          type: boolean
+          title: Is Tracked
+        order:
+          type: integer
+          title: Order
       type: object
       required:
       - id
       - name
       - description
-      - project_id
-      - created_at
-      title: PublicTarget
-      description: Target (demo product) exposed via public API.
+      - is_goal
+      - is_tracked
+      - order
+      title: PublicUserJourney
+      description: User journey/goal exposed via public API.
     PublicTargetWithJourneys:
       properties:
         id:
@@ -157,37 +186,10 @@ components:
       - created_at
       title: PublicTargetWithJourneys
       description: Target with its user journeys.
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    PublicUserJourney:
+    PublicTarget:
       properties:
         id:
           type: string
-          format: uuid
           title: Id
         name:
           type: string
@@ -197,22 +199,20 @@ components:
           - type: string
           - type: 'null'
           title: Description
-        is_goal:
-          type: boolean
-          title: Is Goal
-        is_tracked:
-          type: boolean
-          title: Is Tracked
-        order:
-          type: integer
-          title: Order
+        project_id:
+          type: string
+          format: uuid
+          title: Project Id
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
       type: object
       required:
       - id
       - name
       - description
-      - is_goal
-      - is_tracked
-      - order
-      title: PublicUserJourney
-      description: User journey/goal exposed via public API.
+      - project_id
+      - created_at
+      title: PublicTarget
+      description: Target (demo product) exposed via public API.
