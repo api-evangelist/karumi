@@ -109,15 +109,36 @@ components:
       - msg
       - type
       title: ValidationError
-    HTTPValidationError:
+    PublicTarget:
       properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        project_id:
+          type: string
+          format: uuid
+          title: Project Id
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
       type: object
-      title: HTTPValidationError
+      required:
+      - id
+      - name
+      - description
+      - project_id
+      - created_at
+      title: PublicTarget
+      description: Target (demo product) exposed via public API.
     PublicUserJourney:
       properties:
         id:
@@ -151,6 +172,15 @@ components:
       - order
       title: PublicUserJourney
       description: User journey/goal exposed via public API.
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     PublicTargetWithJourneys:
       properties:
         id:
@@ -186,33 +216,3 @@ components:
       - created_at
       title: PublicTargetWithJourneys
       description: Target with its user journeys.
-    PublicTarget:
-      properties:
-        id:
-          type: string
-          title: Id
-        name:
-          type: string
-          title: Name
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-        project_id:
-          type: string
-          format: uuid
-          title: Project Id
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
-      type: object
-      required:
-      - id
-      - name
-      - description
-      - project_id
-      - created_at
-      title: PublicTarget
-      description: Target (demo product) exposed via public API.

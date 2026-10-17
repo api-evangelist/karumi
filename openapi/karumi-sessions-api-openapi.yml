@@ -344,31 +344,7 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    PaginatedSessions:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/PublicSession'
-          type: array
-          title: Items
-        total:
-          type: integer
-          title: Total
-        limit:
-          type: integer
-          title: Limit
-        offset:
-          type: integer
-          title: Offset
-      type: object
-      required:
-      - items
-      - total
-      - limit
-      - offset
-      title: PaginatedSessions
-      description: Paginated response for session list.
-    PublicSession:
+    PublicSessionWithMessages:
       properties:
         id:
           type: string
@@ -437,6 +413,17 @@ components:
           type: array
           title: Goals
           description: IDs of goal journeys completed in this session
+        messages:
+          items:
+            $ref: '#/components/schemas/PublicTranscriptMessage'
+          type: array
+          title: Messages
+        recording_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Recording Url
+          description: 'Presigned URL to download or stream the session recording. Expires in 1 hour - fetch a fresh URL if expired. Null if: session is still in progress, recording is processing, or recording is unavailable.'
       type: object
       required:
       - id
@@ -451,8 +438,56 @@ components:
       - labels
       - metadata
       - tracked_journeys
-      title: PublicSession
-      description: Session data exposed via public API.
+      title: PublicSessionWithMessages
+      description: Session with optional transcript messages.
+    PaginatedSessions:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/PublicSession'
+          type: array
+          title: Items
+        total:
+          type: integer
+          title: Total
+        limit:
+          type: integer
+          title: Limit
+        offset:
+          type: integer
+          title: Offset
+      type: object
+      required:
+      - items
+      - total
+      - limit
+      - offset
+      title: PaginatedSessions
+      description: Paginated response for session list.
+    PaginatedSessionEvents:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/PublicSessionEvent'
+          type: array
+          title: Items
+        total:
+          type: integer
+          title: Total
+        limit:
+          type: integer
+          title: Limit
+        offset:
+          type: integer
+          title: Offset
+      type: object
+      required:
+      - items
+      - total
+      - limit
+      - offset
+      title: PaginatedSessionEvents
+      description: Paginated response for the session events list.
     ValidationError:
       properties:
         loc:
@@ -479,56 +514,6 @@ components:
       - msg
       - type
       title: ValidationError
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    PublicSessionInsights:
-      properties:
-        session_id:
-          type: string
-          format: uuid
-          title: Session Id
-        status:
-          type: string
-          title: Status
-        generated_at:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Generated At
-        insights:
-          items:
-            $ref: '#/components/schemas/PublicInsight'
-          type: array
-          title: Insights
-      type: object
-      required:
-      - session_id
-      - status
-      title: PublicSessionInsights
-      description: Session insights response for public API.
-    PublicInsightEvidence:
-      properties:
-        text:
-          type: string
-          title: Text
-        timestamp:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Timestamp
-      type: object
-      required:
-      - text
-      title: PublicInsightEvidence
-      description: Evidence item for a public insight.
     PublicInsight:
       properties:
         key:
@@ -626,30 +611,6 @@ components:
       - created_at
       title: PublicSessionEvent
       description: A per-session demo event (meeting CTA click / booking) for the public API.
-    PaginatedSessionEvents:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/PublicSessionEvent'
-          type: array
-          title: Items
-        total:
-          type: integer
-          title: Total
-        limit:
-          type: integer
-          title: Limit
-        offset:
-          type: integer
-          title: Offset
-      type: object
-      required:
-      - items
-      - total
-      - limit
-      - offset
-      title: PaginatedSessionEvents
-      description: Paginated response for the session events list.
     PublicTranscriptMessage:
       properties:
         id:
@@ -677,7 +638,33 @@ components:
       - created_at
       title: PublicTranscriptMessage
       description: Transcript message for public API (text only).
-    PublicSessionWithMessages:
+    PublicSessionInsights:
+      properties:
+        session_id:
+          type: string
+          format: uuid
+          title: Session Id
+        status:
+          type: string
+          title: Status
+        generated_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Generated At
+        insights:
+          items:
+            $ref: '#/components/schemas/PublicInsight'
+          type: array
+          title: Insights
+      type: object
+      required:
+      - session_id
+      - status
+      title: PublicSessionInsights
+      description: Session insights response for public API.
+    PublicSession:
       properties:
         id:
           type: string
@@ -746,17 +733,6 @@ components:
           type: array
           title: Goals
           description: IDs of goal journeys completed in this session
-        messages:
-          items:
-            $ref: '#/components/schemas/PublicTranscriptMessage'
-          type: array
-          title: Messages
-        recording_url:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Recording Url
-          description: 'Presigned URL to download or stream the session recording. Expires in 1 hour - fetch a fresh URL if expired. Null if: session is still in progress, recording is processing, or recording is unavailable.'
       type: object
       required:
       - id
@@ -771,5 +747,29 @@ components:
       - labels
       - metadata
       - tracked_journeys
-      title: PublicSessionWithMessages
-      description: Session with optional transcript messages.
+      title: PublicSession
+      description: Session data exposed via public API.
+    PublicInsightEvidence:
+      properties:
+        text:
+          type: string
+          title: Text
+        timestamp:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Timestamp
+      type: object
+      required:
+      - text
+      title: PublicInsightEvidence
+      description: Evidence item for a public insight.
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError

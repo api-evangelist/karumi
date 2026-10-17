@@ -167,22 +167,125 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    PublicAnalyticsDistribution:
+    PublicAnalytics:
       properties:
-        buckets:
+        minutes_distribution:
+          $ref: '#/components/schemas/PublicAnalyticsDistribution'
+        rating_distribution:
+          $ref: '#/components/schemas/PublicAnalyticsDistribution'
+        status_distribution:
+          $ref: '#/components/schemas/PublicAnalyticsDistribution'
+        intent_distribution:
+          $ref: '#/components/schemas/PublicAnalyticsDistribution'
+        repeat_visitors:
           items:
-            $ref: '#/components/schemas/PublicDistributionBucket'
+            $ref: '#/components/schemas/PublicRepeatVisitorBucket'
           type: array
-          title: Buckets
-        total_count:
+          title: Repeat Visitors
+        version_comparison:
+          items:
+            $ref: '#/components/schemas/PublicVersionMetrics'
+          type: array
+          title: Version Comparison
+        total_sessions:
           type: integer
-          title: Total Count
+          title: Total Sessions
+        avg_duration_seconds:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Avg Duration Seconds
+        total_goals_reached:
+          type: integer
+          title: Total Goals Reached
+          default: 0
       type: object
       required:
-      - buckets
-      - total_count
-      title: PublicAnalyticsDistribution
-      description: Distribution data for a single metric.
+      - minutes_distribution
+      - rating_distribution
+      - status_distribution
+      - intent_distribution
+      - repeat_visitors
+      - version_comparison
+      - total_sessions
+      title: PublicAnalytics
+      description: Analytics data for the organization.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    PublicRepeatVisitorBucket:
+      properties:
+        demo_count:
+          type: integer
+          title: Demo Count
+        visitor_count:
+          type: integer
+          title: Visitor Count
+      type: object
+      required:
+      - demo_count
+      - visitor_count
+      title: PublicRepeatVisitorBucket
+      description: Count of visitors by number of demos taken.
+    PublicTimelineAnalytics:
+      properties:
+        data_points:
+          items:
+            $ref: '#/components/schemas/PublicTimelineDataPoint'
+          type: array
+          title: Data Points
+        granularity:
+          type: string
+          title: Granularity
+        versions:
+          items:
+            type: integer
+          type: array
+          title: Versions
+      type: object
+      required:
+      - data_points
+      - granularity
+      - versions
+      title: PublicTimelineAnalytics
+      description: Time-series analytics data.
+    PublicDistributionBucket:
+      properties:
+        label:
+          type: string
+          title: Label
+        count:
+          type: integer
+          title: Count
+      type: object
+      required:
+      - label
+      - count
+      title: PublicDistributionBucket
+      description: A single bucket in a distribution.
     PublicVersionMetrics:
       properties:
         version:
@@ -246,32 +349,22 @@ components:
       - goals_count
       title: PublicTimelineDataPoint
       description: Single data point in the analytics timeline.
-    ValidationError:
+    PublicAnalyticsDistribution:
       properties:
-        loc:
+        buckets:
           items:
-            anyOf:
-            - type: string
-            - type: integer
+            $ref: '#/components/schemas/PublicDistributionBucket'
           type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
+          title: Buckets
+        total_count:
+          type: integer
+          title: Total Count
       type: object
       required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
+      - buckets
+      - total_count
+      title: PublicAnalyticsDistribution
+      description: Distribution data for a single metric.
     HTTPValidationError:
       properties:
         detail:
@@ -281,96 +374,3 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
-    PublicAnalytics:
-      properties:
-        minutes_distribution:
-          $ref: '#/components/schemas/PublicAnalyticsDistribution'
-        rating_distribution:
-          $ref: '#/components/schemas/PublicAnalyticsDistribution'
-        status_distribution:
-          $ref: '#/components/schemas/PublicAnalyticsDistribution'
-        intent_distribution:
-          $ref: '#/components/schemas/PublicAnalyticsDistribution'
-        repeat_visitors:
-          items:
-            $ref: '#/components/schemas/PublicRepeatVisitorBucket'
-          type: array
-          title: Repeat Visitors
-        version_comparison:
-          items:
-            $ref: '#/components/schemas/PublicVersionMetrics'
-          type: array
-          title: Version Comparison
-        total_sessions:
-          type: integer
-          title: Total Sessions
-        avg_duration_seconds:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Avg Duration Seconds
-        total_goals_reached:
-          type: integer
-          title: Total Goals Reached
-          default: 0
-      type: object
-      required:
-      - minutes_distribution
-      - rating_distribution
-      - status_distribution
-      - intent_distribution
-      - repeat_visitors
-      - version_comparison
-      - total_sessions
-      title: PublicAnalytics
-      description: Analytics data for the organization.
-    PublicRepeatVisitorBucket:
-      properties:
-        demo_count:
-          type: integer
-          title: Demo Count
-        visitor_count:
-          type: integer
-          title: Visitor Count
-      type: object
-      required:
-      - demo_count
-      - visitor_count
-      title: PublicRepeatVisitorBucket
-      description: Count of visitors by number of demos taken.
-    PublicTimelineAnalytics:
-      properties:
-        data_points:
-          items:
-            $ref: '#/components/schemas/PublicTimelineDataPoint'
-          type: array
-          title: Data Points
-        granularity:
-          type: string
-          title: Granularity
-        versions:
-          items:
-            type: integer
-          type: array
-          title: Versions
-      type: object
-      required:
-      - data_points
-      - granularity
-      - versions
-      title: PublicTimelineAnalytics
-      description: Time-series analytics data.
-    PublicDistributionBucket:
-      properties:
-        label:
-          type: string
-          title: Label
-        count:
-          type: integer
-          title: Count
-      type: object
-      required:
-      - label
-      - count
-      title: PublicDistributionBucket
-      description: A single bucket in a distribution.
