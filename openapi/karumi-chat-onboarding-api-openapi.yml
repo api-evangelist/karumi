@@ -1,0 +1,337 @@
+openapi: 3.2.0
+info:
+  title: Karumi Public Chat onboarding API
+  description: Public API for accessing Karumi session data. Authenticate using the X-Api-Key header with your organization's API key.
+  version: 1.0.0
+servers:
+- url: /api/v1
+tags:
+- name: Chat onboarding
+paths:
+  /chat/onboarding/identity-token:
+    post:
+      tags:
+      - Chat onboarding
+      summary: Create Chat Identity Token
+      description: 'Mint the token a host page passes to ``KarumiChat.identify()``.
+
+
+        The whole point of the indirection: the chat routes the browser talks to are
+
+        unauthenticated, so they cannot be handed a raw user id — anyone could name
+
+        somebody else. Minting happens HERE, behind the organization''s API key, and
+
+        the browser only ever carries the result.
+
+
+        Call it server-side when rendering a page for a signed-in user and pass the
+
+        token into the page. It is bound to this target and expires, so it is not
+
+        worth much if it leaks and it cannot be replayed against another chat.
+
+
+        Args:
+
+        request: The target and who the host is vouching for — its own user id,
+
+        that user''s email, or both. Prefer sending the email; see the
+
+        request model.
+
+        auth: The calling organization, from the ``X-Api-Key`` header.
+
+        target_repo: TargetRepository dependency.
+
+
+        Returns:
+
+        The token and its lifetime in seconds.
+
+
+        Raises:
+
+        HTTPException: 404 when the target does not exist or is not the
+
+        caller''s — indistinguishable, as on ``/events``. 400 when neither
+
+        identifier is usable, 503 when the backend has no token secret
+
+        configured.'
+      operationId: create_chat_identity_token_chat_onboarding_identity_token_post
+      parameters:
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdentityTokenRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdentityTokenResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /chat/onboarding/events:
+    post:
+      tags:
+      - Chat onboarding
+      summary: Record Host Onboarding Event
+      description: 'Record what the host application knows about one user''s activation.
+
+
+        Args:
+
+        request: The target, the host''s user id, and what it is reporting.
+
+        auth: The calling organization, from the ``X-Api-Key`` header.
+
+        target_repo: TargetRepository dependency.
+
+        chat_template_repo: ChatTemplateRepository dependency.
+
+        db_session: Session used to resolve the target and its template.
+
+
+        Returns:
+
+        The run''s facts and completed steps after the event.
+
+
+        Raises:
+
+        HTTPException: 404 when the target does not exist, is not the caller''s,
+
+        or runs no checklist — one status for all three on purpose, so the
+
+        endpoint cannot be used to discover which targets belong to another
+
+        organization. 400 when the payload names no work to do or carries
+
+        no usable identity.'
+      operationId: record_host_onboarding_event_chat_onboarding_events_post
+      parameters:
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HostOnboardingEventRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HostOnboardingEventResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    IdentityTokenResponse:
+      properties:
+        token:
+          type: string
+          title: Token
+        expires_in:
+          type: integer
+          title: Expires In
+      type: object
+      required:
+      - token
+      - expires_in
+      title: IdentityTokenResponse
+      description: An opaque token to hand to the browser.
+    HostOnboardingEventResponse:
+      properties:
+        external_user_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: External User Id
+        email:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Email
+        facts:
+          additionalProperties:
+            items:
+              type: string
+            type: array
+          type: object
+          title: Facts
+        completed_steps:
+          items:
+            type: string
+          type: array
+          title: Completed Steps
+        unknown_steps:
+          items:
+            type: string
+          type: array
+          title: Unknown Steps
+        unknown_state_keys:
+          items:
+            type: string
+          type: array
+          title: Unknown State Keys
+      type: object
+      required:
+      - facts
+      - completed_steps
+      title: HostOnboardingEventResponse
+      description: The run as it stands after the event.
+    HostOnboardingEventRequest:
+      properties:
+        target_id:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Target Id
+        external_user_id:
+          anyOf:
+          - type: string
+            maxLength: 191
+            minLength: 1
+          - type: 'null'
+          title: External User Id
+        email:
+          anyOf:
+          - type: string
+            maxLength: 194
+          - type: 'null'
+          title: Email
+        facts:
+          additionalProperties:
+            items:
+              type: string
+            type: array
+          type: object
+          title: Facts
+        completed_steps:
+          items:
+            type: string
+          type: array
+          maxItems: 50
+          title: Completed Steps
+        state_keys:
+          additionalProperties:
+            type: string
+          type: object
+          title: State Keys
+      type: object
+      required:
+      - target_id
+      title: HostOnboardingEventRequest
+      description: 'What a host application reports about one of its users.
+
+
+        Both payload halves are optional and independent — a host that only knows
+
+        which integrations an account has sends ``facts``; one that watches its own
+
+        activation events sends ``completed_steps``; one that does both sends both
+
+        in a single call, which is also the only way to make them land together.'
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    IdentityTokenRequest:
+      properties:
+        target_id:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Target Id
+        external_user_id:
+          anyOf:
+          - type: string
+            maxLength: 191
+            minLength: 1
+          - type: 'null'
+          title: External User Id
+        email:
+          anyOf:
+          - type: string
+            maxLength: 194
+          - type: 'null'
+          title: Email
+      type: object
+      required:
+      - target_id
+      title: IdentityTokenRequest
+      description: 'Ask for a token that lets this chat read one user''s own run.
+
+
+        Send the EMAIL whenever you have it. It is the key ``/events`` writes
+
+        verified completions under and the key a demo call reads runs under, so a
+
+        token carrying only your internal id puts the widget on a different row
+
+        from both — and the customer''s progress stops following them between your
+
+        product and a call. Send both when you have both; the id then rides along
+
+        for audit without deciding anything.'

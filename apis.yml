@@ -72,11 +72,12 @@ tags_raw:
 - conversation-intelligence
 apis:
 - name: Karumi MCP Server
-  description: Hosted, remote MCP server that exposes a Karumi workspace to any MCP-compatible client.
-    37 published tools cover organizations, agents, sessions, transcripts (keyword and semantic search),
-    leads, companies, audiences, journeys, start pages, knowledge, voices, Q&A and API keys; 13 of them
-    are write or destructive and require client confirmation. Authenticated with OAuth 2.0 authorization
-    code over HTTPS, advertising RFC 9728 protected-resource metadata.
+  description: >-
+    Hosted, remote MCP server that exposes a Karumi workspace to any MCP-compatible client. 37 published
+    tools cover organizations, agents, sessions, transcripts (keyword and semantic search), leads, companies,
+    audiences, journeys, start pages, knowledge, voices, Q&A and API keys; 13 of them are write or destructive
+    and require client confirmation. Authenticated with OAuth 2.0 authorization code over HTTPS, advertising
+    RFC 9728 protected-resource metadata.
   humanURL: https://www.karumi.ai/mcp-documentation
   baseURL: https://api.karumi.ai/mcp/
   tags:
@@ -166,6 +167,16 @@ apis:
     url: data-model/karumi-data-model.yml
   - type: ErrorCatalog
     url: errors/karumi-problem-types.yml
+- aid: karumi:karumi-chat-onboarding-api
+  name: Karumi Chat onboarding API
+  description: The Chat onboarding API from Karumi — 2 operation(s) for chat onboarding.
+  humanURL: https://www.karumi.ai/mcp-documentation
+  baseURL: https://api.karumi.ai/mcp/
+  tags:
+  - Chat onboarding
+  properties:
+  - type: OpenAPI
+    url: openapi/karumi-chat-onboarding-api-openapi.yml
 common:
 - type: AgenticAccess
   url: agentic-access/karumi-agentic-access.yml

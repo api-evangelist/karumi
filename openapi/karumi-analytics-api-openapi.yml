@@ -167,6 +167,52 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    PublicAnalyticsDistribution:
+      properties:
+        buckets:
+          items:
+            $ref: '#/components/schemas/PublicDistributionBucket'
+          type: array
+          title: Buckets
+        total_count:
+          type: integer
+          title: Total Count
+      type: object
+      required:
+      - buckets
+      - total_count
+      title: PublicAnalyticsDistribution
+      description: Distribution data for a single metric.
+    PublicVersionMetrics:
+      properties:
+        version:
+          type: integer
+          title: Version
+        session_count:
+          type: integer
+          title: Session Count
+        completed_count:
+          type: integer
+          title: Completed Count
+        email_rejected_count:
+          type: integer
+          title: Email Rejected Count
+        error_count:
+          type: integer
+          title: Error Count
+        goals_achieved_count:
+          type: integer
+          title: Goals Achieved Count
+      type: object
+      required:
+      - version
+      - session_count
+      - completed_count
+      - email_rejected_count
+      - error_count
+      - goals_achieved_count
+      title: PublicVersionMetrics
+      description: Metrics for a specific agent version.
     PublicAnalytics:
       properties:
         minutes_distribution:
@@ -210,112 +256,6 @@ components:
       - total_sessions
       title: PublicAnalytics
       description: Analytics data for the organization.
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    PublicRepeatVisitorBucket:
-      properties:
-        demo_count:
-          type: integer
-          title: Demo Count
-        visitor_count:
-          type: integer
-          title: Visitor Count
-      type: object
-      required:
-      - demo_count
-      - visitor_count
-      title: PublicRepeatVisitorBucket
-      description: Count of visitors by number of demos taken.
-    PublicTimelineAnalytics:
-      properties:
-        data_points:
-          items:
-            $ref: '#/components/schemas/PublicTimelineDataPoint'
-          type: array
-          title: Data Points
-        granularity:
-          type: string
-          title: Granularity
-        versions:
-          items:
-            type: integer
-          type: array
-          title: Versions
-      type: object
-      required:
-      - data_points
-      - granularity
-      - versions
-      title: PublicTimelineAnalytics
-      description: Time-series analytics data.
-    PublicDistributionBucket:
-      properties:
-        label:
-          type: string
-          title: Label
-        count:
-          type: integer
-          title: Count
-      type: object
-      required:
-      - label
-      - count
-      title: PublicDistributionBucket
-      description: A single bucket in a distribution.
-    PublicVersionMetrics:
-      properties:
-        version:
-          type: integer
-          title: Version
-        session_count:
-          type: integer
-          title: Session Count
-        completed_count:
-          type: integer
-          title: Completed Count
-        email_rejected_count:
-          type: integer
-          title: Email Rejected Count
-        error_count:
-          type: integer
-          title: Error Count
-        goals_achieved_count:
-          type: integer
-          title: Goals Achieved Count
-      type: object
-      required:
-      - version
-      - session_count
-      - completed_count
-      - email_rejected_count
-      - error_count
-      - goals_achieved_count
-      title: PublicVersionMetrics
-      description: Metrics for a specific agent version.
     PublicTimelineDataPoint:
       properties:
         date:
@@ -349,22 +289,6 @@ components:
       - goals_count
       title: PublicTimelineDataPoint
       description: Single data point in the analytics timeline.
-    PublicAnalyticsDistribution:
-      properties:
-        buckets:
-          items:
-            $ref: '#/components/schemas/PublicDistributionBucket'
-          type: array
-          title: Buckets
-        total_count:
-          type: integer
-          title: Total Count
-      type: object
-      required:
-      - buckets
-      - total_count
-      title: PublicAnalyticsDistribution
-      description: Distribution data for a single metric.
     HTTPValidationError:
       properties:
         detail:
@@ -374,3 +298,79 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
+    PublicTimelineAnalytics:
+      properties:
+        data_points:
+          items:
+            $ref: '#/components/schemas/PublicTimelineDataPoint'
+          type: array
+          title: Data Points
+        granularity:
+          type: string
+          title: Granularity
+        versions:
+          items:
+            type: integer
+          type: array
+          title: Versions
+      type: object
+      required:
+      - data_points
+      - granularity
+      - versions
+      title: PublicTimelineAnalytics
+      description: Time-series analytics data.
+    PublicRepeatVisitorBucket:
+      properties:
+        demo_count:
+          type: integer
+          title: Demo Count
+        visitor_count:
+          type: integer
+          title: Visitor Count
+      type: object
+      required:
+      - demo_count
+      - visitor_count
+      title: PublicRepeatVisitorBucket
+      description: Count of visitors by number of demos taken.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    PublicDistributionBucket:
+      properties:
+        label:
+          type: string
+          title: Label
+        count:
+          type: integer
+          title: Count
+      type: object
+      required:
+      - label
+      - count
+      title: PublicDistributionBucket
+      description: A single bucket in a distribution.

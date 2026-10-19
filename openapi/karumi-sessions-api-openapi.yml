@@ -137,9 +137,9 @@ paths:
           anyOf:
           - type: string
           - type: 'null'
-          description: 'Filter by event type: ''meeting_cta_clicked'' or ''meeting_booked'''
+          description: 'Filter by event type: ''meeting_cta_clicked'', ''booking_offered'' or ''meeting_booked'''
           title: Event Type
-        description: 'Filter by event type: ''meeting_cta_clicked'' or ''meeting_booked'''
+        description: 'Filter by event type: ''meeting_cta_clicked'', ''booking_offered'' or ''meeting_booked'''
       - name: start_date
         in: query
         required: false
@@ -406,6 +406,13 @@ components:
             type: object
           - type: 'null'
           title: Tracked Journeys
+        excluded_from_analytics_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Excluded From Analytics At
+          description: Set when an operator marked this session as not counting towards analytics (monitoring or test traffic). The session is still real and still listed here — this flag is what lets you leave it out of your own numbers. Null means it counts normally.
         goals:
           items:
             type: string
@@ -423,7 +430,7 @@ components:
           - type: string
           - type: 'null'
           title: Recording Url
-          description: 'Presigned URL to download or stream the session recording. Expires in 1 hour - fetch a fresh URL if expired. Null if: session is still in progress, recording is processing, or recording is unavailable.'
+          description: 'URL of this API''s recording download endpoint (GET /sessions/{session_id}/recording); call it with your X-Api-Key. Null if: session is still in progress, recording is processing, or recording is unavailable.'
       type: object
       required:
       - id
@@ -440,30 +447,6 @@ components:
       - tracked_journeys
       title: PublicSessionWithMessages
       description: Session with optional transcript messages.
-    PaginatedSessions:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/PublicSession'
-          type: array
-          title: Items
-        total:
-          type: integer
-          title: Total
-        limit:
-          type: integer
-          title: Limit
-        offset:
-          type: integer
-          title: Offset
-      type: object
-      required:
-      - items
-      - total
-      - limit
-      - offset
-      title: PaginatedSessions
-      description: Paginated response for session list.
     PaginatedSessionEvents:
       properties:
         items:
@@ -488,32 +471,47 @@ components:
       - offset
       title: PaginatedSessionEvents
       description: Paginated response for the session events list.
-    ValidationError:
+    PublicSessionInsights:
       properties:
-        loc:
+        session_id:
+          type: string
+          format: uuid
+          title: Session Id
+        status:
+          type: string
+          title: Status
+        generated_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Generated At
+        insights:
           items:
-            anyOf:
-            - type: string
-            - type: integer
+            $ref: '#/components/schemas/PublicInsight'
           type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
+          title: Insights
       type: object
       required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
+      - session_id
+      - status
+      title: PublicSessionInsights
+      description: Session insights response for public API.
+    PublicInsightEvidence:
+      properties:
+        text:
+          type: string
+          title: Text
+        timestamp:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Timestamp
+      type: object
+      required:
+      - text
+      title: PublicInsightEvidence
+      description: Evidence item for a public insight.
     PublicInsight:
       properties:
         key:
@@ -559,6 +557,15 @@ components:
       - status
       title: PublicInsight
       description: AI-extracted insight for public API.
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     PublicSessionEvent:
       properties:
         id:
@@ -578,7 +585,7 @@ components:
         event_type:
           type: string
           title: Event Type
-          description: Event type, e.g. 'meeting_cta_clicked' or 'meeting_booked'
+          description: Event type, e.g. 'meeting_cta_clicked', 'booking_offered' or 'meeting_booked'
         url:
           anyOf:
           - type: string
@@ -597,7 +604,7 @@ components:
             type: object
           - type: 'null'
           title: Metadata
-          description: 'Event-specific data. For ''meeting_booked'': booked contact (first/last name, email), slot timerange, organizer name, and link type.'
+          description: 'Event-specific data. For ''meeting_booked'': `provider` (hubspot, outreach or calendly); for HubSpot also the booked contact (first/last name, email), slot timerange, organizer name, and link type. For ''booking_offered'': the rep''s `rep_name` and `rep_email` when the offered link is theirs, or the `message` shown instead of a link.'
         created_at:
           type: string
           format: date-time
@@ -611,59 +618,56 @@ components:
       - created_at
       title: PublicSessionEvent
       description: A per-session demo event (meeting CTA click / booking) for the public API.
-    PublicTranscriptMessage:
+    PaginatedSessions:
       properties:
-        id:
-          type: string
-          format: uuid
-          title: Id
-        speaker:
-          type: string
-          enum:
-          - user
-          - assistant
-          title: Speaker
-        content:
-          type: string
-          title: Content
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
-      type: object
-      required:
-      - id
-      - speaker
-      - content
-      - created_at
-      title: PublicTranscriptMessage
-      description: Transcript message for public API (text only).
-    PublicSessionInsights:
-      properties:
-        session_id:
-          type: string
-          format: uuid
-          title: Session Id
-        status:
-          type: string
-          title: Status
-        generated_at:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Generated At
-        insights:
+        items:
           items:
-            $ref: '#/components/schemas/PublicInsight'
+            $ref: '#/components/schemas/PublicSession'
           type: array
-          title: Insights
+          title: Items
+        total:
+          type: integer
+          title: Total
+        limit:
+          type: integer
+          title: Limit
+        offset:
+          type: integer
+          title: Offset
       type: object
       required:
-      - session_id
-      - status
-      title: PublicSessionInsights
-      description: Session insights response for public API.
+      - items
+      - total
+      - limit
+      - offset
+      title: PaginatedSessions
+      description: Paginated response for session list.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
     PublicSession:
       properties:
         id:
@@ -726,6 +730,13 @@ components:
             type: object
           - type: 'null'
           title: Tracked Journeys
+        excluded_from_analytics_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Excluded From Analytics At
+          description: Set when an operator marked this session as not counting towards analytics (monitoring or test traffic). The session is still real and still listed here — this flag is what lets you leave it out of your own numbers. Null means it counts normally.
         goals:
           items:
             type: string
@@ -749,27 +760,30 @@ components:
       - tracked_journeys
       title: PublicSession
       description: Session data exposed via public API.
-    PublicInsightEvidence:
+    PublicTranscriptMessage:
       properties:
-        text:
+        id:
           type: string
-          title: Text
-        timestamp:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Timestamp
+          format: uuid
+          title: Id
+        speaker:
+          type: string
+          enum:
+          - user
+          - assistant
+          title: Speaker
+        content:
+          type: string
+          title: Content
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
       type: object
       required:
-      - text
-      title: PublicInsightEvidence
-      description: Evidence item for a public insight.
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
+      - id
+      - speaker
+      - content
+      - created_at
+      title: PublicTranscriptMessage
+      description: Transcript message for public API (text only).
