@@ -335,3 +335,9 @@ components:
         product and a call. Send both when you have both; the id then rides along
 
         for audit without deciding anything.'
+x-provenance:
+  method: harvested
+  publisher: Karumi
+  source: https://api.karumi.ai/api/v1/openapi.json
+  note: split by refine-openapis from the provider's own published document, verified by fetch (openapi/_original/*.fetch.json);
+    stamped by stamp-openapi-provenance.py (roadmap#793)
