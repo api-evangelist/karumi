@@ -64,6 +64,134 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Karumi is a company surfaced as a portfolio company of y-combinator and added to the API Evangelist network as a stub for enrichment. This profile is a lead awaiting the enrichment pipeline.
+Karumi is an agentic demo platform that delivers personalized, AI-powered product demonstrations during live video calls. Its AI agent runs live, interactive demos 24/7 across landing pages, in-app surfaces, and outbound email, adapting each demonstration to the prospect and navigating the product in-browser in real time. It supports multiple languages, logs transcripts, analysis, and next steps into the CRM, and targets B2B SaaS go-to-market teams looking to engage high-intent leads at peak interest instead of waiting days for a human demo. Karumi publishes a read-only Public API over session, transcript, insight, target and analytics data (OpenAPI 3.1.0, X-Api-Key auth) and a hosted, OAuth-protected MCP server exposing 37 tools for operating the platform from an MCP client. Karumi is a Y Combinator (Fall 2025) company founded by Pablo Omenaca (CEO) and Toni Lopez (CTO), both formerly of StackAI (YC W23).
 
-Backed by: y-combinator
+**Areas:** Company · AI Agents · Product Demos · Sales Enablement · Go-To-Market · Software-as-a-Service · Conversational AI · Video · Y Combinator · MCP · Agent-Native · Analytics
+
+## Karumi on APIs.io
+
+Everything profiled for Karumi is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/karumi/](https://apis.io/providers/karumi/)** — or go straight to one of the APIs or properties below.
+
+### APIs (4)
+
+- [Karumi MCP Server](https://apis.io/apis/karumi/karumi-mcp-server/) — Hosted, remote MCP server that exposes a Karumi workspace to any MCP-compatible client. 37 published tools cover organizations, agents, sessions,…
+- [Karumi Analytics API](https://apis.io/apis/karumi/karumi-analytics-api/) — The Analytics API from Karumi — 2 operation(s) for analytics.
+- [Karumi Sessions API](https://apis.io/apis/karumi/karumi-sessions-api/) — The Sessions API from Karumi — 5 operation(s) for sessions.
+- [Karumi Targets API](https://apis.io/apis/karumi/karumi-targets-api/) — The Targets API from Karumi — 2 operation(s) for targets.
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### MCP servers (1)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [karumi](https://apis.io/servers/karumi/karumi/)
+
+#### Agentic access (1)
+
+Which operations an agent can call, which act, and which need a human in the loop.
+
+- [Karumi Agentic Access](https://apis.io/agentic-access/karumi/karumi-agentic-access/)
+
+#### Overlays (1)
+
+OpenAPI overlays, including conversational phrasing for each operation.
+
+- [Karumi Public Api Overlay](https://apis.io/overlays/karumi/karumi-public-api-overlay/)
+
+#### Security (3)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Karumi Authentication](https://apis.io/security/karumi/karumi-authentication/)
+- [Karumi Domain Security](https://apis.io/security/karumi/karumi-domain-security/)
+- [Karumi Trust Center](https://apis.io/security/karumi/karumi-trust-center/)
+
+#### OAuth scopes (1)
+
+The permissions the API asks for.
+
+- [Karumi Scopes](https://apis.io/scopes/karumi/karumi-scopes/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Karumi Plans Pricing](https://apis.io/plans/karumi/karumi-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Karumi Rate Limits](https://apis.io/rate-limits/karumi/karumi-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://www.karumi.ai/)
+- [Documentation](https://api.karumi.ai/api/v1/docs)
+- [API reference](https://api.karumi.ai/api/v1/redoc)
+- [Pricing](https://www.karumi.ai/pricing)
+- [Sign up](https://app.karumi.ai/)
+- [Blog](https://www.karumi.ai/blog)
+- [Compliance](https://trust.delve.co/karumi)
+- [Terms of service](https://www.karumi.ai/terms)
+- [Privacy policy](https://www.karumi.ai/privacy)
+
+## API Evangelist rating
+
+**Kin Score 43.1** — developing · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 68.3 |
+| Contract quality | 43.5 |
+| Contract governance | 4.5 |
+| Operational transparency | 0.0 |
+| Developer ergonomics | 32.7 |
+| Access clarity | 77.6 |
+
+**Agent readiness 60.0** — agent-native
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | na |
+| MCP Server | verified |
+| Auth Clarity | served (partial credit) |
+| Idempotency | na |
+| Error Semantics | verified |
+| OpenAPI Examples | — |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | na |
+| Delegated Identity | served (partial credit) |
+| Protected Resource Metadata | verified |
+| Dynamic Client Registration | yes |
+| Agentic Commerce | — |
+| Pagination Ratio | partial |
+| Operation Distinctiveness | distinct |
+
+**Regulatory alignment 36.8** — AI & Biometrics
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/karumi/](https://apis.io/providers/karumi/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Karumi: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/karumi/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
